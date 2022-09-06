@@ -1,20 +1,85 @@
-import React from "react";
+import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import About from "./Pages/About";
-import Home from "./Pages/Home";
+import { LoginContext } from "./Contexts/LoginContext";
+import Session from "./integrations/session";
+import Sso from "./integrations/sso";
+import Layout from "./layouts/Layout";
+import { PrivateRoute } from "./layouts/PrivateRoute";
+import NotFound from "./pages/NotFound";
+import Account from "./pages/Simulations/Accounts";
+import Login from "./pages/Simulations/Login";
 
-function App() {
+import { Home } from "./pages/Home";
+import NoAccess from "./pages/NoAccess";
+import { NewPayment } from "./pages/NewPayment";
+import { UserInfo } from "./models/UserInfo.model";
+
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserInfo>(null || {
+    name: "",
+    login: "",
+    document: "",
+    accessToken:"",
+    tokenSSO: ""
+  });
   return (
-    <>
-      <div className='App'>
-        <h1>Welcome to React Router!</h1>
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='about' element={<About />} />
-        </Routes>
-      </div>
-    </>
+    <LoginContext.Provider
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        loading,
+        setLoading,
+        userInfo,
+        setUserInfo,
+      }}>
+      <Routes>
+        <Route path='/' element={<Layout />}>
+          <Route path='/noAccess' element={<NoAccess />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/sso' element={<Sso />} />
+          <Route path='/session' element={<Session />} />
+
+          <Route
+            path='/'
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path='/home'
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path='/accounts'
+            element={
+              <PrivateRoute>
+                <Account />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path='/newpayment'
+            element={
+              <PrivateRoute>
+                <NewPayment />
+              </PrivateRoute>
+            }
+          />
+
+          <Route path='*' element={<NotFound />} />
+        </Route>
+      </Routes>
+    </LoginContext.Provider>
   );
 }
-
-export default App;

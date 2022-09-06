@@ -1,15 +1,19 @@
-# Meu projeto Template de React
+## Instalar pacotes
 
-## Available Scripts:
+yarn install
 
-## Run:
+## Rodar aplicação
 
-### `npm start`
+yarn start
 
-## Test
+Irá abrir um endereço Local, abrir ele no navegador.
 
-### `npm test`
+### Material ui usado
 
-## Build
+https://v4.mui.com/
 
-### `npm run build`
+https://v4.mui.com/pt/getting-started/installation/
+
+### Roteamento
+
+https://reactrouter.com/docs/en/v6/getting-started/overview
