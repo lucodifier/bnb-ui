@@ -17,6 +17,8 @@ import { PixComChave } from "./pages/PixComChave/PixComChave";
 import ComprovantePix from "./pages/ComprovantePix";
 import { storageService } from "../services/storage.service";
 import ConsultaComprovante from "./pages/ConsultaComprovante/ConsultaComprovante";
+import { NewTransfer } from "./Pages/NewTransfer/NewTransfer";
+import { AgencyAccount } from "./Pages/AgencyAccount/AgencyAccount";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,7 +31,7 @@ export default function App() {
       accessToken: "",
       tokenSSO: "",
     }
-  );  
+  );
 
   return (
     <LoginContext.Provider
@@ -40,17 +42,16 @@ export default function App() {
         setLoading,
         userInfo,
         setUserInfo,
-      }}
-    >
+      }}>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route path="/noAccess" element={<NoAccess />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/sso" element={<Sso />} />
-          <Route path="/session" element={<Session />} />
+        <Route path='/' element={<Layout />}>
+          <Route path='/noAccess' element={<NoAccess />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/sso' element={<Sso />} />
+          <Route path='/session' element={<Session />} />
 
           <Route
-            path="/"
+            path='/'
             element={
               <PrivateRoute>
                 <Home />
@@ -59,7 +60,7 @@ export default function App() {
           />
 
           <Route
-            path="/home"
+            path='/home'
             element={
               <PrivateRoute>
                 <Home />
@@ -68,7 +69,7 @@ export default function App() {
           />
 
           <Route
-            path="/pix-com-chave"
+            path='/pix-com-chave'
             element={
               <PrivateRoute>
                 <PixComChave />
@@ -80,13 +81,13 @@ export default function App() {
             path='/consultaComprovante'
             element={
               // <PrivateRoute>
-                <ConsultaComprovante />
+              <ConsultaComprovante />
               // </PrivateRoute>
             }
           />
 
           <Route
-            path="/accounts"
+            path='/accounts'
             element={
               <PrivateRoute>
                 <Account />
@@ -95,26 +96,33 @@ export default function App() {
           />
 
           <Route
-            path="/newpayment"
+            path='/comprovantePix'
             element={
               <PrivateRoute>
-                <NewPayment />
+                <ComprovantePix transacaoId={""} />
               </PrivateRoute>
             }
           />
 
           <Route
-            path="/comprovantePix"
+            path='/agency-account'
             element={
               <PrivateRoute>
-                <ComprovantePix
-                  transacaoId={""}                  
-                />
+                <AgencyAccount />
               </PrivateRoute>
             }
           />
 
-          <Route path="*" element={<NotFound />} />
+          <Route
+            path='/newtransfer'
+            element={
+              <PrivateRoute>
+                <NewTransfer />
+              </PrivateRoute>
+            }
+          />
+
+          <Route path='*' element={<NotFound />} />
         </Route>
       </Routes>
     </LoginContext.Provider>

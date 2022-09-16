@@ -10,13 +10,14 @@ import {
 } from "../../assets/icons/iconsSvg";
 import useStyles from "./Home.styles";
 import IconCard from "../layouts/components/IconCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginContext } from "../Contexts/LoginContext";
 import { formatDocument } from "../../services/util.service";
 import { storageService } from "../../services/storage.service";
-import imgQrCode from '../../assets/img/QRCode.png';
+import imgQrCode from "../../assets/img/QRCode.png";
 
 export function Home() {
+  let navigate = useNavigate();
   const classes = useStyles();
   const [userName, setUserName] = React.useState("");
   const [userDoc, setUserDoc] = React.useState("");
@@ -26,14 +27,12 @@ export function Home() {
   React.useEffect(() => {
     if (userInfo && userInfo.login) {
       setUserName(userInfo.login);
-      if (userInfo.document)
-        setUserDoc(formatDocument(userInfo.document));
+      if (userInfo.document) setUserDoc(formatDocument(userInfo.document));
     } else {
       var user = storageService.recover("x_access_token");
       if (user && user.documento) {
         setUserName(user.login);
-        if (user.document)
-          setUserDoc(formatDocument(user.documento));
+        if (user.document) setUserDoc(formatDocument(user.documento));
       }
     }
   }, []);
@@ -44,10 +43,7 @@ export function Home() {
         <Grid item xs={12} md={4} sm={12}>
           <Card className={classes.cards_blocks}>
             <Grid item xs={3} md={3} sm={3}>
-              <img
-                src={imgQrCode}
-                style={{ width: "100%" }}
-              />
+              <img src={imgQrCode} style={{ width: "100%" }} />
             </Grid>
             <Grid item xs={6} md={6} sm={6}>
               <Typography className={classes.card_key_text}>
@@ -83,7 +79,7 @@ export function Home() {
             classes={{ root: classes.card_link, label: classes.label }}
             variant='contained'
             color='primary'
-            href="#/pix-com-chave"
+            href='#/pix-com-chave'
             size='large'>
             <PayPixIcon />
             <span className={classes.text_button}>
@@ -121,6 +117,7 @@ export function Home() {
             classes={{ root: classes.card_link, label: classes.label }}
             variant='contained'
             color='primary'
+            href='#/agency-account'
             size='large'>
             <PayAgencyIcon />
             <span className={classes.text_button}>
@@ -134,10 +131,7 @@ export function Home() {
         <span className={classes.title_section}>Consultar</span>
         <Grid container spacing={1}>
           <Grid item xs={6} md={3} sm={6}>
-            <IconCard
-              icon='extrato'
-              title='Extrato'             
-            />
+            <IconCard icon='extrato' title='Extrato' />
           </Grid>
           <Grid item xs={6} md={3} sm={6}>
             <IconCard

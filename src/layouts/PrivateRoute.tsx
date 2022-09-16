@@ -17,11 +17,10 @@ export const PrivateRoute = ({ children, ...props }: Props) => {
   }
 
   if (!userIsLogged()) {
-    console.log("Retornou sem acesso");
     // not logged in so redirect to login page with the return url
     return (
       <React.Fragment>
-        <Navigate to="/noAccess" />;
+        <Navigate to='/noAccess' />;
       </React.Fragment>
     );
   }
