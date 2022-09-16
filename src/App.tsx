@@ -5,18 +5,16 @@ import Session from "./integrations/session";
 import Sso from "./integrations/sso";
 import Layout from "./layouts/Layout";
 import { PrivateRoute } from "./layouts/PrivateRoute";
-import NotFound from "./pages/NotFound";
-import Account from "./pages/Simulations/Accounts";
-import Login from "./pages/Simulations/Login";
+import NotFound from "./Pages/NotFound";
+import Account from "./Pages/Simulations/Accounts";
+import Login from "./Pages/Simulations/Login";
 
-import { Home } from "./pages/Home";
-import NoAccess from "./pages/NoAccess";
-import { NewPayment } from "./pages/NewPayment";
+import { Home } from "./Pages/Home";
+import NoAccess from "./Pages/NoAccess";
 import { UserInfo } from "./models/UserInfo.model";
-import { PixComChave } from "./pages/PixComChave/PixComChave";
-import ComprovantePix from "./pages/ComprovantePix";
-import { storageService } from "../services/storage.service";
-import ConsultaComprovante from "./pages/ConsultaComprovante/ConsultaComprovante";
+import { PixComChave } from "./Pages/PixComChave/PixComChave";
+import ComprovantePix from "./Pages/ComprovantePix";
+import ConsultaComprovante from "./Pages/ConsultaComprovante/ConsultaComprovante";
 import { NewTransfer } from "./Pages/NewTransfer/NewTransfer";
 import { AgencyAccount } from "./Pages/AgencyAccount/AgencyAccount";
 

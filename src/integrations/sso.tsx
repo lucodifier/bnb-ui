@@ -13,6 +13,11 @@ const Sso = () => {
   const [ssoError, setSsoError] = useState<string>("");
 
   useEffect(() => {
+    document.addEventListener(
+      "message",
+      (event) => receiveAppMessage(event),
+      false
+    );
     window.addEventListener(
       "message",
       (event) => receiveAppMessage(event),

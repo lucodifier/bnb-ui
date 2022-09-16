@@ -16,6 +16,12 @@ const Session = () => {
       (event) => receiveAppMessage(event),
       false
     );
+    window.addEventListener(
+      "message",
+      (event) => receiveAppMessage(event),
+      false
+    );
+    console.info('Adicionou o listener do Session no React')
   }, []);
 
   const receiveAppMessage = async (event: any) => {
