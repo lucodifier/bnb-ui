@@ -13,17 +13,24 @@ import { Home } from "./pages/Home";
 import NoAccess from "./pages/NoAccess";
 import { NewPayment } from "./pages/NewPayment";
 import { UserInfo } from "./models/UserInfo.model";
+import { PixComChave } from "./pages/PixComChave/PixComChave";
+import ComprovantePix from "./pages/ComprovantePix";
+import { storageService } from "../services/storage.service";
+import ConsultaComprovante from "./pages/ConsultaComprovante/ConsultaComprovante";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [userInfo, setUserInfo] = useState<UserInfo>(null || {
-    name: "",
-    login: "",
-    document: "",
-    accessToken:"",
-    tokenSSO: ""
-  });
+  const [userInfo, setUserInfo] = useState<UserInfo>(
+    null || {
+      name: "",
+      login: "",
+      document: "",
+      accessToken: "",
+      tokenSSO: "",
+    }
+  );  
+
   return (
     <LoginContext.Provider
       value={{
@@ -33,16 +40,17 @@ export default function App() {
         setLoading,
         userInfo,
         setUserInfo,
-      }}>
+      }}
+    >
       <Routes>
-        <Route path='/' element={<Layout />}>
-          <Route path='/noAccess' element={<NoAccess />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/sso' element={<Sso />} />
-          <Route path='/session' element={<Session />} />
+        <Route path="/" element={<Layout />}>
+          <Route path="/noAccess" element={<NoAccess />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/sso" element={<Sso />} />
+          <Route path="/session" element={<Session />} />
 
           <Route
-            path='/'
+            path="/"
             element={
               <PrivateRoute>
                 <Home />
@@ -51,7 +59,7 @@ export default function App() {
           />
 
           <Route
-            path='/home'
+            path="/home"
             element={
               <PrivateRoute>
                 <Home />
@@ -60,7 +68,25 @@ export default function App() {
           />
 
           <Route
-            path='/accounts'
+            path="/pix-com-chave"
+            element={
+              <PrivateRoute>
+                <PixComChave />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path='/consultaComprovante'
+            element={
+              // <PrivateRoute>
+                <ConsultaComprovante />
+              // </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/accounts"
             element={
               <PrivateRoute>
                 <Account />
@@ -69,7 +95,7 @@ export default function App() {
           />
 
           <Route
-            path='/newpayment'
+            path="/newpayment"
             element={
               <PrivateRoute>
                 <NewPayment />
@@ -77,7 +103,18 @@ export default function App() {
             }
           />
 
-          <Route path='*' element={<NotFound />} />
+          <Route
+            path="/comprovantePix"
+            element={
+              <PrivateRoute>
+                <ComprovantePix
+                  transacaoId={""}                  
+                />
+              </PrivateRoute>
+            }
+          />
+
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </LoginContext.Provider>

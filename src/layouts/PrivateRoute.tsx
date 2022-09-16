@@ -3,40 +3,25 @@ import * as React from "react";
 import { LoginContext } from "../Contexts/LoginContext";
 import { Navigate } from "react-router-dom";
 import { Props } from "../Types/Types";
+import { MyQRCodeIcon } from "../../assets/icons/iconsSvg";
 import { storageService } from "../../services/storage.service";
-import { UserInfo } from "../models/UserInfo.model";
 
 export const PrivateRoute = ({ children, ...props }: Props) => {
-  const { isLoggedIn, setIsLoggedIn, setUserInfo } =
+  const { isLoggedIn, setIsLoggedIn, userInfo, setUserInfo } =
     React.useContext(LoginContext);
 
-  const [access, setAccess] = React.useState<UserInfo>(
-    null || {
-      name: "",
-      login: "",
-      document: "",
-      accessToken: "",
-      tokenSSO: "",
-    }
-  );
+  function userIsLogged() {
+    console.log("Validando acesso");
+    const accessToken = storageService.recover("x_access_token");
+    return accessToken && accessToken?.documento;
+  }
 
-  React.useEffect(() => {
-    debugger;
-    if (storageService.recover("x_access_token")) {
-      setAccess(storageService.recover("x_access_token"));
-      if (access) {
-        if (setIsLoggedIn) setIsLoggedIn(true);
-        if (setUserInfo) setUserInfo(access);
-      }
-    }
-  }, []);
-
-  debugger;
-  if (!isLoggedIn && !access?.document) {
+  if (!userIsLogged()) {
+    console.log("Retornou sem acesso");
     // not logged in so redirect to login page with the return url
     return (
       <React.Fragment>
-        <Navigate to='/noAccess' />;
+        <Navigate to="/noAccess" />;
       </React.Fragment>
     );
   }

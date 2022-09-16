@@ -26,12 +26,14 @@ export function Home() {
   React.useEffect(() => {
     if (userInfo && userInfo.login) {
       setUserName(userInfo.login);
-      setUserDoc(formatDocument(userInfo.document));
+      if (userInfo.document)
+        setUserDoc(formatDocument(userInfo.document));
     } else {
       var user = storageService.recover("x_access_token");
       if (user && user.documento) {
         setUserName(user.login);
-        setUserDoc(formatDocument(user.documento));
+        if (user.document)
+          setUserDoc(formatDocument(user.documento));
       }
     }
   }, []);
@@ -81,6 +83,7 @@ export function Home() {
             classes={{ root: classes.card_link, label: classes.label }}
             variant='contained'
             color='primary'
+            href="#/pix-com-chave"
             size='large'>
             <PayPixIcon />
             <span className={classes.text_button}>
@@ -133,11 +136,7 @@ export function Home() {
           <Grid item xs={6} md={3} sm={6}>
             <IconCard
               icon='extrato'
-              title='Extrato'
-              itens={[
-                { title: "Por dia", link: "/home" },
-                { title: "Por período", link: "/home" },
-              ]}
+              title='Extrato'             
             />
           </Grid>
           <Grid item xs={6} md={3} sm={6}>
@@ -145,11 +144,11 @@ export function Home() {
               icon='comprovantes'
               title='Comprovantes'
               to='/home'
-              itens={[
-                { title: "7 dias", link: "/home" },
-                { title: "15 dias", link: "/home" },
-                { title: "No período", link: "/home" },
-              ]}
+              // itens={[
+              //   { title: "7 dias", link: "/home" },
+              //   { title: "15 dias", link: "/home" },
+              //   { title: "No período", link: "/home" },
+              // ]}
             />
           </Grid>
 

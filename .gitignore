@@ -25,4 +25,3 @@ dist-ssr
 
 # Não enviar os locks
 *.lock 
-yarn.lock

@@ -11,7 +11,7 @@ const Session = () => {
   const { setIsLoggedIn, userInfo, setUserInfo } = useContext(LoginContext);
 
   useEffect(() => {
-    window.addEventListener(
+    document.addEventListener(
       "message",
       (event) => receiveAppMessage(event),
       false
@@ -19,7 +19,7 @@ const Session = () => {
   }, []);
 
   const receiveAppMessage = async (event: any) => {
-    if (event.origin == import.meta.env.VITE_ORIGIN_URL) {
+    if (import.meta.env.VITE_ORIGINS_URLS.includes(event.origin)) {
       event.preventDefault();
       if (
         event.data.type === "webpackInvalid" ||

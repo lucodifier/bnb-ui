@@ -1,5 +1,7 @@
 import { createTheme } from "@material-ui/core/styles";
 //require("typeface-lato");
+import "typeface-lato";
+//import 'typeface-roboto';
 
 // A custom theme for this app
 const theme = createTheme({

@@ -18,12 +18,13 @@ const Sso = () => {
       (event) => receiveAppMessage(event),
       false
     );
+    console.info('Adicionou o listener no React')
   }, []);
 
   const receiveAppMessage = (event: any) => {
     event.preventDefault();
-
-    if (event.origin == import.meta.env.VITE_ORIGIN_URL) {
+console.log('lendo')
+    if (import.meta.env.VITE_ORIGINS_URLS.includes(event.origin)) {
       if (
         event.data.type === "webpackInvalid" ||
         event.data.type === "webpackOk" ||
@@ -110,6 +111,8 @@ const Sso = () => {
                 navigate("/accounts");
               } else {
                 window.removeEventListener("message", receiveAppMessage, false);
+
+                console.log("Postou o token para o ASP!")
 
                 // Posta mensagem com token
                 event.source.postMessage(
