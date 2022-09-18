@@ -11,17 +11,24 @@ const Session = () => {
   const { setIsLoggedIn, userInfo, setUserInfo } = useContext(LoginContext);
 
   useEffect(() => {
-    document.addEventListener(
-      "message",
-      (event) => receiveAppMessage(event),
-      false
-    );
-    window.addEventListener(
-      "message",
-      (event) => receiveAppMessage(event),
-      false
-    );
-    console.info('Adicionou o listener do Session no React')
+    if (window)
+    {
+      window.addEventListener(
+        "message",
+        (event) => receiveAppMessage(event),
+        false
+      );
+      console.info('Adicionou o listener do Session no React via window')
+    }
+    else {
+      document.addEventListener(
+        "message",
+        (event) => receiveAppMessage(event),
+        false
+      );
+      console.info('Adicionou o listener do Session no React via document')
+    }   
+    
   }, []);
 
   const receiveAppMessage = async (event: any) => {

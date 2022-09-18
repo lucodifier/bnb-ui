@@ -2,6 +2,10 @@ import React from "react";
 import FavoredCard from "./FavoredCard";
 
 export default function TabFavorites() {
+
+
+
+
   return (
     <div>
       <FavoredCard

@@ -13,17 +13,24 @@ const Sso = () => {
   const [ssoError, setSsoError] = useState<string>("");
 
   useEffect(() => {
-    document.addEventListener(
-      "message",
-      (event) => receiveAppMessage(event),
-      false
-    );
-    window.addEventListener(
-      "message",
-      (event) => receiveAppMessage(event),
-      false
-    );
-    console.info('Adicionou o listener no React')
+    if (window)
+    {
+      window.addEventListener(
+        "message",
+        (event) => receiveAppMessage(event),
+        false
+      );
+      console.info('Adicionou o listener do SSO no React via window')
+    }
+    else {
+      document.addEventListener(
+        "message",
+        (event) => receiveAppMessage(event),
+        false
+      );
+      console.info('Adicionou o listener do SSO no React via document')
+    } 
+    
   }, []);
 
   const receiveAppMessage = (event: any) => {
