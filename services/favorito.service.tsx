@@ -11,11 +11,33 @@ export function obterFavoritosPorCpfCnpj(codigoCliente: string) {
 
 export const favoritoService = {
   obterFavoritos,
+  obterTransferenciasAnterioresAgenciaConta
 };
 
 async function obterFavoritos() {
   try {
-    let response = await api.get(`${base_path}/obter-favoritos-conta-logado`);
+    
+    let response = await api.get(`${base_path}/obter-favoritos-conta`);
+   
+    let treated = handlingService.handleResponse(
+      response,
+      "favoritesService.getFavorites"
+    );
+    if (treated) {
+      return treated;
+    }
+    return null;
+  } catch (error) {
+    handlingService.cathError(error, "favoritesService.getFavorites");
+    return null;
+  }
+}
+
+async function obterTransferenciasAnterioresAgenciaConta() {
+  try {
+    
+    let response = await api.get(`${base_path}/transferencias-anteriores-agencia-conta`);
+   
     let treated = handlingService.handleResponse(
       response,
       "favoritesService.getFavorites"

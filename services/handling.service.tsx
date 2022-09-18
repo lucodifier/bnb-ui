@@ -8,7 +8,14 @@ function handleResponse(response: any, area: string) {
     return null;
   }
 
-  if (response.data) return response.data.result;
+  if (response.data){
+    if (response.data.result.data){
+      return response.data.result.data;
+    }
+    else {
+      return response.data.result;
+    }
+  }
 
   return response.result;
 }
@@ -34,6 +41,10 @@ function cathError(error: any, area: string, warning: boolean = true) {
       console.error(message);
     } else {
       console.warn(message);
+    }
+
+    if (error.response && error.response.status === 401) {
+      window.location.href = '/#/noAccess'    
     }
   } catch (ex) {
     console.log(ex);

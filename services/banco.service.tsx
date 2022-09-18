@@ -18,22 +18,29 @@ export function getNameByIspb(bancos: Array<BancoModel>, ispb: string): string {
 }
 
 export const bancoService = {
-  obterBanco,
+  listaBancos,
+  filtraPorISPB
 };
 
-async function obterBanco(ispb: string) {
+async function listaBancos() {
   try {
-    let response = await api.get(`${base_path}/Bancos`);
+    
+    let response = await api.get(base_path);
     let treated = handlingService.handleResponse(
       response,
       "bancoService.obterBanco"
     );
     if (treated) {
-      return treated.find((banco) => banco.ispbBanco === ispb);
+      return treated;
     }
     return null;
   } catch (error) {
     handlingService.cathError(error, "bancoService.obterBanco");
     return null;
   }
+}
+
+function filtraPorISPB(bancos: Array<BancoModel>, ispb: string): string {
+  const banco = getByIspb(bancos, ispb);
+  return banco ? banco.nomeBanco : ispb;
 }

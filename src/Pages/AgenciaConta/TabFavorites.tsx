@@ -3,20 +3,22 @@ import { favoritoService } from "../../../services/favorito.service";
 import { FavoritoModel } from "../../models/Favorito.model";
 import FavoredCard from "./FavoredCard";
 import { bancoService } from "../../../services/banco.service";
+import { BancoModel } from "../../models/Banco.model";
 
 export default function TabFavorites() {
   const [favoritos, setaFavoritos] = useState<FavoritoModel[]>([]);
 
   const obterFavoritos = async () => {
     const response = await favoritoService.obterFavoritos();
-    let listaFavoritos = response as FavoritoModel[];
-    let data = await Promise.all(
-      listaFavoritos.map(async (item) => {
-        item.nomeBanco = await bancoService.obterBanco(item.ispb);
+    const listaFavoritos = response as FavoritoModel[];
+    const listaBancos = (await bancoService.listaBancos()) as BancoModel[];
+    const data = listaFavoritos.map((item) => {
+        item.nomeBanco = bancoService.filtraPorISPB(listaBancos, item.ispb);
+        if (!item.nomeBanco)
+          item.nomeBanco = item.ispb;
         return item;
-      })
-    );
-    setaFavoritos(data);
+      });
+      setaFavoritos(data);
   };
 
   useEffect(() => {
@@ -32,9 +34,11 @@ export default function TabFavorites() {
         favoritos.map((item, index) => (
           <FavoredCard
             name={item.nomeDestinatario}
+            apelido={item.apelidoDestinatario}
             bank={item.nomeBanco}
-            account={`${item.codAgencia}|${item.codConta}-${item.digitoValidadorConta}`}
+            account={`${item.codAgencia} | ${item.codConta}-${item.digitoValidadorConta}`}
             accountType={item.tipoConta}
+            key={index}
           />
         ))}
     </div>

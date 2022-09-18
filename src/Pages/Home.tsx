@@ -117,7 +117,7 @@ export function Home() {
             classes={{ root: classes.card_link, label: classes.label }}
             variant='contained'
             color='primary'
-            href='#/agency-account'
+            href='#/pagar-agencia-conta'
             size='large'>
             <PayAgencyIcon />
             <span className={classes.text_button}>
