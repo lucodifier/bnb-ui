@@ -35,7 +35,7 @@ const Sso = () => {
 
   const receiveAppMessage = (event: any) => {
     event.preventDefault();
-console.log('lendo')
+
     if (import.meta.env.VITE_ORIGINS_URLS.includes(event.origin)) {
       if (
         event.data.type === "webpackInvalid" ||

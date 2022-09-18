@@ -4,11 +4,15 @@ import { FavoritoModel } from "../../models/Favorito.model";
 import FavoredCard from "./FavoredCard";
 import { bancoService } from "../../../services/banco.service";
 import { BancoModel } from "../../models/Banco.model";
+import { LinearProgress } from "@material-ui/core";
 
 export default function TabFavorites() {
   const [favoritos, setaFavoritos] = useState<FavoritoModel[]>([]);
+  const [loading, isLoading] = useState(true);
 
   const obterFavoritos = async () => {
+    isLoading(true);
+    try {
     const response = await favoritoService.obterFavoritos();
     const listaFavoritos = response as FavoritoModel[];
     const listaBancos = (await bancoService.listaBancos()) as BancoModel[];
@@ -19,6 +23,10 @@ export default function TabFavorites() {
         return item;
       });
       setaFavoritos(data);
+      
+    } finally {
+      isLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -30,6 +38,8 @@ export default function TabFavorites() {
 
   return (
     <div>
+      {loading ? <LinearProgress /> : ("")}
+
       {favoritos &&
         favoritos.map((item, index) => (
           <FavoredCard
