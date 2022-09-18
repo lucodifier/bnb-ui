@@ -1,7 +1,31 @@
-import api from './api';
+import api from "./api";
+import { handlingService } from "./handling.service";
 
-const path = 'Contatos';
+const base_path = "Contatos";
 
-export function obterFavoritosPorCpfCnpj(codigoCliente: string){
-    return api.get(`${path}/obter-favoritos-chave-pix?CodigoCliente=${codigoCliente}`);
+export function obterFavoritosPorCpfCnpj(codigoCliente: string) {
+  return api.get(
+    `${base_path}/obter-favoritos-chave-pix?CodigoCliente=${codigoCliente}`
+  );
+}
+
+export const favoritoService = {
+  obterFavoritos,
+};
+
+async function obterFavoritos() {
+  try {
+    let response = await api.get(`${base_path}/obter-favoritos-conta-logado`);
+    let treated = handlingService.handleResponse(
+      response,
+      "favoritesService.getFavorites"
+    );
+    if (treated) {
+      return treated;
+    }
+    return null;
+  } catch (error) {
+    handlingService.cathError(error, "favoritesService.getFavorites");
+    return null;
+  }
 }

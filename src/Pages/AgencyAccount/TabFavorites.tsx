@@ -1,37 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { favoritoService } from "../../../services/favorito.service";
+import { FavoritoModel } from "../../models/Favorito.model";
 import FavoredCard from "./FavoredCard";
+import { bancoService } from "../../../services/banco.service";
 
 export default function TabFavorites() {
+  const [favoritos, setaFavoritos] = useState<FavoritoModel[]>([]);
 
+  const obterFavoritos = async () => {
+    const response = await favoritoService.obterFavoritos();
+    let listaFavoritos = response as FavoritoModel[];
+    let data = await Promise.all(
+      listaFavoritos.map(async (item) => {
+        item.nomeBanco = await bancoService.obterBanco(item.ispb);
+        return item;
+      })
+    );
+    setaFavoritos(data);
+  };
 
-
+  useEffect(() => {
+    const initialize = async () => {
+      await obterFavoritos();
+    };
+    initialize();
+  }, []);
 
   return (
     <div>
-      <FavoredCard
-        name='Antônio Juliano Cavalcante (Juliano)'
-        bank='Caixa Econômica Federal'
-        account='0016 | 0000003874-1'
-        accountType='{Conta corrente}'
-      />
-      <FavoredCard
-        name='Bartolomeu Pereira da Silva (Pereira)'
-        bank='Caixa Econômica Federal'
-        account='0016 | 0000003874-1'
-        accountType='{Conta corrente}'
-      />
-      <FavoredCard
-        name='Daniel de Castro e Silva (Castro)'
-        bank='Caixa Econômica Federal'
-        account='0016 | 0000003874-1'
-        accountType='{Conta corrente}'
-      />
-      <FavoredCard
-        name='Francisco Emanuel Maia de Carvalho (Emanuel)'
-        bank='Caixa Econômica Federal'
-        account='0016 | 0000003874-1'
-        accountType='{Conta corrente}'
-      />
+      {favoritos &&
+        favoritos.map((item, index) => (
+          <FavoredCard
+            name={item.nomeDestinatario}
+            bank={item.nomeBanco}
+            account={`${item.codAgencia}|${item.codConta}-${item.digitoValidadorConta}`}
+            accountType={item.tipoConta}
+          />
+        ))}
     </div>
   );
 }
