@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FavoritoModel } from "../../models/Favorito.model";
 import FavoredCard from "./FavoredCard";
-import { bancoService } from "../../../services/banco.service";
-import { BancoModel } from "../../models/Banco.model";
 import { LinearProgress } from "@material-ui/core";
 import { transferenciaService } from "../../../services/transferencia.service";
 import { TransferenciaAnteriorModel } from "../../models/TransferenciaAnterior.model";
