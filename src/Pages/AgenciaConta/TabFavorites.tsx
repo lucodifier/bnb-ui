@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { favoritoService } from "../../../services/favorito.service";
 import { FavoritoModel } from "../../models/Favorito.model";
-import FavoredCard from "./FavoredCard";
+import FavoredCard from "../../layouts/components/FavoredCard";
 import { bancoService } from "../../../services/banco.service";
 import { BancoModel } from "../../models/Banco.model";
 import { LinearProgress } from "@material-ui/core";
+import { FavorecidoContext } from "../../Contexts/FavorecidoContext";
 
 export default function TabFavorites() {
   const [favoritos, setaFavoritos] = useState<FavoritoModel[]>([]);
   const [loading, isLoading] = useState(true);
+  const { setFavorecido } = useContext(FavorecidoContext);
 
   const obterFavoritos = async () => {
     isLoading(true);
