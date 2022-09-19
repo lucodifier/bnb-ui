@@ -13,8 +13,7 @@ import useStyles from "./NovaTransferencia.Style";
 import SearchIcon from "@material-ui/icons//Search";
 import Header from "../../layouts/components/Header";
 import RadioButton from "../../layouts/components/RadioButton";
-
-import BankModal from "./BankSearchModal";
+import ModalBancos from "./ModalBancos";
 import { BancoModel } from "../../models/Banco.model";
 
 const snackInitialForm = {
@@ -24,30 +23,45 @@ const snackInitialForm = {
 };
 
 const MSG_CPF_INVALIDO = "CPF inválido";
+const MSG_SEM_BANCOS =
+  "Não foi possível localizar bancos. Tente novamente mais tarde";
 
 export function NovaTransferencia() {
   const classes = useStyles();
+  const [snack, setSnack] = useState(snackInitialForm);
 
   const [valueTitular, setValueTitular] = useState("same");
   const [account, setAccount] = useState(1);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [bank, setBank] = useState<BancoModel>({
+
+  const [bancoSelecionado, setBancoSelecionado] = useState<BancoModel>({
     idBanco: 0,
     ispbBanco: "",
     nomeBanco: "",
   });
-  const [snack, setSnack] = useState(snackInitialForm);
+
+  const selecionaBanco = (banco: BancoModel) => {
+    console.log(banco);
+    setBancoSelecionado(banco);
+    setModalIsOpen(false);
+  };
+
+  const buscaBancoErros = (error: boolean) => {
+    if (error) {
+      setSnack({
+        open: true,
+        message: MSG_SEM_BANCOS,
+        severity: "error",
+      });
+      setModalIsOpen(false);
+    }
+  };
 
   const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueTitular((event.target as HTMLInputElement).value);
   };
 
   const closeModal = () => {
-    setModalIsOpen(false);
-  };
-
-  const setBankSelected = (newBank: any) => {
-    setBank(newBank);
     setModalIsOpen(false);
   };
 
@@ -70,6 +84,13 @@ export function NovaTransferencia() {
         titleMobile='Pagar com Agência e Conta'
       />
 
+      <ModalBancos
+        modalIsOpen={modalIsOpen}
+        modalClose={closeModal}
+        selecionaBanco={selecionaBanco}
+        buscaBancoErros={buscaBancoErros}
+      />
+
       <Grid container spacing={1} className={classes.main_header}>
         <Grid item xs={12} md={12} sm={12}>
           <Typography className={classes.title_account_data}>
@@ -87,7 +108,7 @@ export function NovaTransferencia() {
             variant='outlined'
             InputLabelProps={{ shrink: true }}
             onClick={() => setModalIsOpen(!modalIsOpen)}
-            value={bank.nomeBanco}
+            value={bancoSelecionado.nomeBanco}
             InputProps={{
               readOnly: true,
               endAdornment: <SearchIcon></SearchIcon>,
@@ -184,12 +205,6 @@ export function NovaTransferencia() {
           />
         </Grid>
       </Grid>
-
-      <BankModal
-        modalIsOpen={modalIsOpen}
-        modalClose={closeModal}
-        selectNewBank={setBankSelected}
-      />
 
       <Grid container spacing={2} className={classes.submit_button_container}>
         <Grid item xs={12} md={2} sm={12}>

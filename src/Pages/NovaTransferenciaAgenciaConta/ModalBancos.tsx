@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Typography,
   Box,
   TextField,
-  Tab,
   Button,
+  Grid,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { obterBancos } from "../../../services/banco.service";
 import { BancoModel } from "../../models/Banco.model";
+import { bancoService } from "../../../services/banco.service";
+import { LinearProgress } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -82,28 +83,63 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function BankModal(props: any) {
+const ModalBancos = React.memo((props: any) => {
   const classes = useStyles();
-  const [selectedBank, setSelectedBank] = React.useState<BancoModel>({
-    idBanco: 0,
-    ispbBanco: "",
-    nomeBanco: "",
-  });
-  const [banks, setBanks] = React.useState(Array<BancoModel>);
 
-  const selectBank = (newBank: any) => {
-    setSelectedBank(newBank);
+  const [bancos, setBancos] = useState(Array<BancoModel>);
+  const [carregando, setCarregando] = useState<boolean>(true);
+
+  const filtrarBancos = async (nome: string) => {
+    const filtrados = bancos.filter((x) =>
+      x.nomeBanco.toLowerCase().includes(nome)
+    );
+    setBancos(filtrados);
+    console.log("filtrarBancos");
   };
 
-  // useEffect(() => {
-  //   obterBancos()
-  //     .then((response: any) => {
-  //       setBanks(response.data.result);
-  //     })
-  //     .catch((error: any) => {
-  //       console.error("Erro ao buscar os bancos: ", error);
-  //     });
-  // }, []);
+  const buscaBancos = async () => {
+    setCarregando(true);
+    try {
+      const response = await bancoService.listaBancos();
+      if (response) {
+        props.buscaBancoErros(false);
+        setBancos(response);
+        return;
+      }
+
+      if (import.meta.env.VITE_ENVIRONMENT == "local") {
+        bancos.push({
+          idBanco: 1,
+          ispbBanco: "2",
+          nomeBanco: "Caixa Economica",
+        });
+        setBancos(bancos);
+        return;
+      }
+
+      props.buscaBancoErros(true);
+    } catch {
+      props.buscaBancoErros(true);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  const selecionaBanco = (banco: BancoModel) => {
+    props.selecionaBanco(banco);
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      if (props.modalIsOpen) {
+        await buscaBancos();
+      }
+      return () => {
+        setBancos([]);
+      };
+    };
+    initialize();
+  }, [props]);
 
   return (
     <Modal
@@ -117,28 +153,41 @@ export default function BankModal(props: any) {
             id='bank-input'
             label='Procurar instituição'
             variant='outlined'
+            onChange={(e) => {
+              console.log(e.target.value);
+              e.target.value.length >= 2 ? filtrarBancos(e.target.value) : "";
+            }}
             className={classes.search_input}
           />
         </div>
         <div className={classes.bank_container}>
-          {banks.map((bank) => {
-            return (
-              <div
-                key={bank.idBanco}
-                className={
-                  bank.idBanco === selectedBank.idBanco
-                    ? classes.bank_tab_selected
-                    : classes.bank_tab
-                }
-                onClick={() => {
-                  selectBank(bank);
-                }}>
-                <Typography className={classes.bank_tab_text}>
-                  {bank.nomeBanco}
-                </Typography>
-              </div>
-            );
-          })}
+          {carregando ? (
+            <LinearProgress
+              style={{ marginLeft: "10px", marginRight: "10px" }}
+            />
+          ) : (
+            ""
+          )}
+
+          {bancos &&
+            bancos.map((bank) => {
+              return (
+                <div
+                  key={bank.idBanco}
+                  className={
+                    bank.idBanco === props.bancoSelecionado?.idBanco
+                      ? classes.bank_tab_selected
+                      : classes.bank_tab
+                  }
+                  onClick={() => {
+                    selecionaBanco(bank);
+                  }}>
+                  <Typography className={classes.bank_tab_text}>
+                    {bank.nomeBanco}
+                  </Typography>
+                </div>
+              );
+            })}
         </div>
         <div className={classes.btn_container}>
           <Button
@@ -148,17 +197,9 @@ export default function BankModal(props: any) {
             onClick={props.modalClose}>
             <span>CANCELAR</span>
           </Button>
-          <Button
-            color='primary'
-            size='large'
-            className={classes.btn_style}
-            onClick={() => {
-              props.selectNewBank(selectedBank);
-            }}>
-            <span>CONTINUAR</span>
-          </Button>
         </div>
       </Box>
     </Modal>
   );
-}
+});
+export default ModalBancos;
