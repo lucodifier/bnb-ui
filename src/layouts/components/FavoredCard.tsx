@@ -81,23 +81,34 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function FavoredCard(props: any) {
+  const selecionarFavorecido = () => {
+    const favorecido = {};
+    alert("selecionou");
+  };
+
   const classes = useStyles();
   return (
     <div className={classes.root} key={props.key}>
       <Grid item xs={12} md={12} sm={12}>
-        <Card className={classes.cards_blocks}>
+        <Card
+          className={classes.cards_blocks}
+          style={{ cursor: "pointer" }}
+          onClick={() => selecionarFavorecido()}>
           <Grid item xs={1} md={1} sm={1}>
             <div className={classes.user_avatar}>{props.name[0]}</div>
           </Grid>
           <Grid item xs={10} md={10} sm={10} className={classes.user_body}>
             <Typography className={classes.card_user_text}>
-              {`${props.name} ${props.apelido ? "(" + props.apelido + ")" : ""}`}
+              {`${props.name} ${
+                props.apelido ? "(" + props.apelido + ")" : ""
+              }`}
             </Typography>
             <Typography className={classes.card_user_sub_text}>
               {props.bank}
             </Typography>
             <Typography className={classes.card_user_sub_text}>
-              {props.account} {" "} {props.accountType == "C" ? "(Conta corrente)" : "(Poupança)"}
+              {props.account}{" "}
+              {props.accountType == "C" ? "(Conta corrente)" : "(Poupança)"}
             </Typography>
           </Grid>
           <Grid item xs={1} md={1} sm={1} className={classes.arrow_back_user}>

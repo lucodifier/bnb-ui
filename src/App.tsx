@@ -17,6 +17,8 @@ import ComprovantePix from "./Pages/ComprovantePix";
 import ConsultaComprovante from "./Pages/ConsultaComprovante/ConsultaComprovante";
 import { AgenciaConta } from "./Pages/AgenciaConta/AgenciaConta";
 import { NovaTransferencia } from "./Pages/NovaTransferenciaAgenciaConta/NovaTransferencia";
+import { EnviarPagamentoAgenciaConta } from "./Pages/EnviarPagamentoAgenciaConta/EnviarPagamentoAgenciaConta";
+import { FavorecidoModel } from "./models/Favorecido.model";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -28,6 +30,18 @@ export default function App() {
       document: "",
       accessToken: "",
       tokenSSO: "",
+    }
+  );
+  const [favorecido, setFavorecido] = useState<FavorecidoModel>(
+    null || {
+      nomeDestinatario: "",
+      nomeBanco: "",
+      cpfCnpjDestinatario: "",
+      tipoConta: "",
+      codAgencia: 0,
+      codConta: 0,
+      ispb: "",
+      digitoValidadorConta: "",
     }
   );
 
@@ -116,6 +130,15 @@ export default function App() {
             element={
               <PrivateRoute>
                 <NovaTransferencia />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path='/pagamento-agencia-conta'
+            element={
+              <PrivateRoute>
+                <EnviarPagamentoAgenciaConta />
               </PrivateRoute>
             }
           />
