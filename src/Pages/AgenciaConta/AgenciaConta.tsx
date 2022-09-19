@@ -2,7 +2,7 @@ import * as React from "react";
 import { AppBar, Tab, Grid, Typography, Tabs } from "@material-ui/core";
 import { TabPanel, TabContext } from "@material-ui/lab";
 import useStyles from "./AgenciaConta.Style";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined";
 import Header from "../../layouts/components/Header";
 import TabFavorites from "./TabFavorites";

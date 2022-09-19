@@ -27,7 +27,12 @@ export function obterTransacoesAnterioresPorChave(
 async function obterTransferenciasAnterioresAgenciaConta() {
   try {
     let response = await api.get(
-      `${base_path}/dados-transferenciaspix-anteriores`
+      `${base_path}/dados-transferenciaspix-anteriores`,
+      {
+        params: {
+          TipoIniPagamento: "DICT",
+        },
+      }
     );
 
     let treated = handlingService.handleResponse(

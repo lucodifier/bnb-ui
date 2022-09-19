@@ -1,28 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { favoritoService } from "../../../services/favorito.service";
 import { FavoritoModel } from "../../models/Favorito.model";
 import FavoredCard from "./FavoredCard";
 import { bancoService } from "../../../services/banco.service";
 import { BancoModel } from "../../models/Banco.model";
 import { LinearProgress } from "@material-ui/core";
+import { transferenciaService } from "../../../services/transferencia.service";
+import { TransferenciaAnteriorModel } from "../../models/TransferenciaAnterior.model";
 
 export default function TabPreviusTransfers() {
   const [loading, isLoading] = useState(true);
-  const [anteriores, setAnteriores] = useState<FavoritoModel[]>([]);
+  const [anteriores, setAnteriores] = useState<TransferenciaAnteriorModel[]>([]);
 
   const obterAnteriores = async () => {
     isLoading(true);
     try {
-      const response =
-        await favoritoService.obterTransferenciasAnterioresAgenciaConta();
-      const listaFavoritos = response as FavoritoModel[];
-      const listaBancos = (await bancoService.listaBancos()) as BancoModel[];
-      const data = listaFavoritos.map((item) => {
-        item.nomeBanco = bancoService.filtraPorISPB(listaBancos, item.ispb);
-        if (!item.nomeBanco) item.nomeBanco = item.ispb;
-        return item;
-      });
-      setAnteriores(data);
+      const response =await transferenciaService.obterTransferenciasAnterioresAgenciaConta();
+      setAnteriores(response);
     } finally {
       isLoading(false);
     }
@@ -45,9 +38,9 @@ export default function TabPreviusTransfers() {
         anteriores.map((item, index) => (
           <FavoredCard
             name={item.nomeDestinatario}
-            apelido={item.apelidoDestinatario}
+            apelido={""}
             bank={item.nomeBanco}
-            account={`${item.codAgencia} | ${item.codConta}-${item.digitoValidadorConta}`}
+            account={`${item.codigoAgencia} | ${item.codigoConta}-${item.digitoConta}`}
             accountType={item.tipoConta}
             key={index}
           />
