@@ -38,7 +38,7 @@ export function AgenciaConta() {
         <Grid item xs={12} md={12} sm={12}>
           <Typography
             className={classes.title_new_transfer}
-            onClick={() => navigate("/newtransfer")}>
+            onClick={() => navigate("/tranferencia-agencia-conta")}>
             <AddCircleOutlinedIcon className={classes.icon_margin} />
             Nova Trânsferencia
           </Typography>

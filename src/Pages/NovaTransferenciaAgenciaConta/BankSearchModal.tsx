@@ -95,15 +95,15 @@ export default function BankModal(props: any) {
     setSelectedBank(newBank);
   };
 
-  useEffect(() => {
-    obterBancos()
-      .then((response: any) => {
-        setBanks(response.data.result);
-      })
-      .catch((error: any) => {
-        console.error("Erro ao buscar os bancos: ", error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   obterBancos()
+  //     .then((response: any) => {
+  //       setBanks(response.data.result);
+  //     })
+  //     .catch((error: any) => {
+  //       console.error("Erro ao buscar os bancos: ", error);
+  //     });
+  // }, []);
 
   return (
     <Modal

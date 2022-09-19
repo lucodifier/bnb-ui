@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Grid,
@@ -6,35 +6,40 @@ import {
   TextField,
   FormControlLabel,
   MenuItem,
+  Snackbar,
 } from "@material-ui/core";
-import useStyles from "./NewTransfer.Style";
+import { Alert } from "@material-ui/lab";
+import useStyles from "./NovaTransferencia.Style";
 import SearchIcon from "@material-ui/icons//Search";
 import Header from "../../layouts/components/Header";
 import RadioButton from "../../layouts/components/RadioButton";
-import Alert from "../../layouts/components/Alert";
+
 import BankModal from "./BankSearchModal";
 import { BancoModel } from "../../models/Banco.model";
 
-export function NewTransfer() {
+const snackInitialForm = {
+  open: false,
+  message: "",
+  severity: "success" as any,
+};
+
+const MSG_CPF_INVALIDO = "CPF inválido";
+
+export function NovaTransferencia() {
   const classes = useStyles();
 
-  const [valueTitular, setValueTitular] = React.useState("same");
-  const [error, setError] = React.useState("CPF Inválido");
-  const [hasError, setHasError] = React.useState(false);
-  const [account, setAccount] = React.useState(1);
-  const [modalIsOpen, setModalIsOpen] = React.useState(false);
-  const [bank, setBank] = React.useState<BancoModel>({
+  const [valueTitular, setValueTitular] = useState("same");
+  const [account, setAccount] = useState(1);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [bank, setBank] = useState<BancoModel>({
     idBanco: 0,
     ispbBanco: "",
     nomeBanco: "",
   });
+  const [snack, setSnack] = useState(snackInitialForm);
 
   const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueTitular((event.target as HTMLInputElement).value);
-  };
-
-  const closeError = () => {
-    setHasError(false);
   };
 
   const closeModal = () => {
@@ -46,10 +51,17 @@ export function NewTransfer() {
     setModalIsOpen(false);
   };
 
-  const tipoContas = [
-    { id: 1, nome: "Conta Corrente" },
-    { id: 2, nome: "Conta Poupança" },
-  ];
+  const handleSnackClose = () => {
+    setSnack({ ...snack, open: false });
+  };
+
+  const validarCpf = (cpf: string) => {
+    setSnack({
+      open: true,
+      message: MSG_CPF_INVALIDO,
+      severity: "error",
+    });
+  };
 
   return (
     <React.Fragment>
@@ -57,11 +69,7 @@ export function NewTransfer() {
         title='Pix - Pagar com Agência e Conta'
         titleMobile='Pagar com Agência e Conta'
       />
-      <Alert
-        error={error}
-        hasError={hasError}
-        closeErrorFunction={closeError}
-      />
+
       <Grid container spacing={1} className={classes.main_header}>
         <Grid item xs={12} md={12} sm={12}>
           <Typography className={classes.title_account_data}>
@@ -89,7 +97,7 @@ export function NewTransfer() {
         <Grid item xs={12} md={3} sm={12}>
           <TextField
             className={classes.text_field_input}
-            id='acount-type-input'
+            id='account-type-input'
             label='Tipo de Conta'
             variant='outlined'
             select
@@ -113,7 +121,7 @@ export function NewTransfer() {
         <Grid item xs={12} md={3} sm={12}>
           <TextField
             className={classes.text_field_input}
-            id='acount-input'
+            id='account-input'
             label='Conta'
             variant='outlined'
             InputLabelProps={{ shrink: true }}
@@ -160,6 +168,7 @@ export function NewTransfer() {
             id='cpf-input'
             label='CPF/CNPJ'
             variant='outlined'
+            onBlur={(e) => validarCpf(e.target.value)}
             InputLabelProps={{ shrink: true }}
             placeholder='000.000.000-00'
           />
@@ -188,13 +197,25 @@ export function NewTransfer() {
             classes={{ root: classes.submit_button }}
             variant='contained'
             color='primary'
-            size='large'
-            onClick={() => setHasError(!hasError)}>
+            size='large'>
             <span>CONTINUAR</span>
           </Button>
         </Grid>
       </Grid>
-      <BankModal />
+
+      <Snackbar
+        {...snack}
+        style={{ width: "100%" }}
+        autoHideDuration={5000}
+        onClose={handleSnackClose}>
+        <Alert
+          variant='filled'
+          onClose={handleSnackClose}
+          severity={snack.severity}
+          style={{ width: "90%", backgroundColor: "#ebae2a" }}>
+          {snack.message}
+        </Alert>
+      </Snackbar>
     </React.Fragment>
   );
 }

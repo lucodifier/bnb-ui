@@ -15,8 +15,8 @@ import { UserInfo } from "./models/UserInfo.model";
 import { PixComChave } from "./Pages/PixComChave/PixComChave";
 import ComprovantePix from "./Pages/ComprovantePix";
 import ConsultaComprovante from "./Pages/ConsultaComprovante/ConsultaComprovante";
-import { NewTransfer } from "./Pages/NewTransfer/NewTransfer";
 import { AgenciaConta } from "./Pages/AgenciaConta/AgenciaConta";
+import { NovaTransferencia } from "./Pages/NovaTransferenciaAgenciaConta/NovaTransferencia";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -112,10 +112,10 @@ export default function App() {
           />
 
           <Route
-            path='/newtransfer'
+            path='/tranferencia-agencia-conta'
             element={
               <PrivateRoute>
-                <NewTransfer />
+                <NovaTransferencia />
               </PrivateRoute>
             }
           />
