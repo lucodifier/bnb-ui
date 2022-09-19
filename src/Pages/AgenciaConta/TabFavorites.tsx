@@ -13,17 +13,15 @@ export default function TabFavorites() {
   const obterFavoritos = async () => {
     isLoading(true);
     try {
-    const response = await favoritoService.obterFavoritos();
-    const listaFavoritos = response as FavoritoModel[];
-    const listaBancos = (await bancoService.listaBancos()) as BancoModel[];
-    const data = listaFavoritos.map((item) => {
+      const response = await favoritoService.obterFavoritos();
+      const listaFavoritos = response as FavoritoModel[];
+      const listaBancos = (await bancoService.listaBancos()) as BancoModel[];
+      const data = listaFavoritos.map((item) => {
         item.nomeBanco = bancoService.filtraPorISPB(listaBancos, item.ispb);
-        if (!item.nomeBanco)
-          item.nomeBanco = item.ispb;
+        if (!item.nomeBanco) item.nomeBanco = item.ispb;
         return item;
       });
       setaFavoritos(data);
-      
     } finally {
       isLoading(false);
     }
@@ -32,13 +30,16 @@ export default function TabFavorites() {
   useEffect(() => {
     const initialize = async () => {
       await obterFavoritos();
+      return () => {
+        setaFavoritos([]);
+      };
     };
     initialize();
   }, []);
 
   return (
     <div>
-      {loading ? <LinearProgress /> : ("")}
+      {loading ? <LinearProgress /> : ""}
 
       {favoritos &&
         favoritos.map((item, index) => (

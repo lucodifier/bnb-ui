@@ -31,6 +31,9 @@ export default function TabPreviusTransfers() {
   useEffect(() => {
     const initialize = async () => {
       await obterAnteriores();
+      return () => {
+        setAnteriores([]);
+      };
     };
     initialize();
   }, []);
