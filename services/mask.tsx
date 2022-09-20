@@ -53,7 +53,7 @@ export const maskAcc = (v) => {
     return v
   }
 
-// export const maskPix = (v) => {
+// export const maskValor = (v) => {
 //   v = v.replace(/\D/g,'');
 //   v = (v/100).toFixed(2);
 // 	v = v.replace(".", ",");
@@ -64,7 +64,7 @@ export const maskAcc = (v) => {
 
 // }   
 
-export const maskPix = (v) => {
+export const maskValor = (v) => {
   v = v.replace(/\D/g, "");
   v = (v/100).toFixed(2);
   v = v.replace(".", ",");

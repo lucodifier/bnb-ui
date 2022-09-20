@@ -50,6 +50,8 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     width: "100%",
     paddingBottom: "2rem",
+    height: '50vh',
+    overflow: 'auto',
   },
   bank_tab: {
     width: "100%",
@@ -70,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#DADADA",
   },
   bank_tab_text: {
-    fontSize: "1.2rem",
+    fontSize: "0.8rem",
   },
   btn_style: {
     backgroundColor: "#FFFFFF",
@@ -90,6 +92,7 @@ const ModalBancos = React.memo((props: any) => {
   const [carregando, setCarregando] = useState<boolean>(true);
 
   const filtrarBancos = async (nome: string) => {
+    
     const filtrados = bancos.filter((x) =>
       x.nomeBanco.toLowerCase().includes(nome)
     );

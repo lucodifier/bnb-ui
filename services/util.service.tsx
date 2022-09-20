@@ -10,6 +10,8 @@ export function formatDocument(cpf: string) {
 
 export const toCurrency = (value) => {
   if (value) {
+    debugger
+    value = value.replace(/\D/g, "");
     try {
       return Number(value).toLocaleString("pt-br", {
         style: "currency",

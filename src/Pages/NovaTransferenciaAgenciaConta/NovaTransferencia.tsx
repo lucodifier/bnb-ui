@@ -145,8 +145,6 @@ export function NovaTransferencia() {
       return;
     }
 
-    debugger
-
     const somenteConta = conta?.split("-")[0].trim();
     const digito = conta?.split("-")[1].trim();
 
@@ -164,7 +162,7 @@ export function NovaTransferencia() {
 
     if (setFavorecido) setFavorecido(favorecido as FavorecidoModel);
 
-    navigate(`/${Routes.EnviarPagamentoAgenciaConta}`);
+    navigate(Routes.EnviarPagamentoAgenciaConta);
   };
 
   return (

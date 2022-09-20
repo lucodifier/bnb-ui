@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Card, Grid, Typography } from "@material-ui/core";
 import { LoginContext } from "../../Contexts/LoginContext";
-import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -96,6 +95,7 @@ const useStyles = makeStyles((theme) => ({
 export default function CardFavorecido() {
   const { favorecido } = useContext(LoginContext);
 
+  
   const classes = useStyles();
   return (
     <div className={classes.root}>
