@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Card, Grid, Typography } from "@material-ui/core";
 import { Link, useNavigate } from "react-router-dom";
@@ -82,34 +82,31 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function FavoredCard(props: any) {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { setFavorecido } = useContext(LoginContext);
 
   const selecionarFavorecido = () => {
     try {
-    
-    const conta = props.account?.split("|")[0].trim(); 
-    const agencia =  props.account?.split("|")[1].split("-")[0].trim(); 
-    const digito = props.account?.split("|")[1].split("-")[1].trim(); 
+      const conta = props.account?.split("|")[0].trim();
+      const agencia = props.account?.split("|")[1].split("-")[0].trim();
+      const digito = props.account?.split("|")[1].split("-")[1].trim();
 
-    const favorecido = {
-      nomeDestinatario: props.name,
-      nomeBanco: props.bank,
-      cpfCnpjDestinatario:props.document,
-      tipoConta: props.accountType,
-      codAgencia: agencia ? Number(agencia) : 0,
-      codConta: conta ? Number(conta) : 0,
-      digitoValidadorConta: digito,
-      apelido: props.apelido
-    }
+      const favorecido = {
+        nomeDestinatario: props.name,
+        nomeBanco: props.bank,
+        cpfCnpjDestinatario: props.document,
+        tipoConta: props.accountType,
+        codAgencia: agencia ? Number(agencia) : 0,
+        codConta: conta ? Number(conta) : 0,
+        digitoValidadorConta: digito,
+        apelido: props.apelido,
+      };
 
-    if (setFavorecido) setFavorecido(favorecido as FavorecidoModel);
+      if (setFavorecido) setFavorecido(favorecido as FavorecidoModel);
 
-    navigate(props.to);
-
+      navigate(props.to);
     } catch {
-        console.info('Não selecionou o favorecido')
+      console.info("Não selecionou o favorecido");
     }
   };
 
