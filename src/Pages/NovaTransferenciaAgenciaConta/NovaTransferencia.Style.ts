@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     bottom: 0,
-    marginTop: "25%",
+  
     "@media (max-width:800px)": {
       marginTop: "0",
     },

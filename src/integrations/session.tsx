@@ -103,6 +103,8 @@ const Session = () => {
               bankISPB: json["ISPBBanco"],
             };
 
+            storageService.store("user_session", json);
+
             if (setUserInfo) setUserInfo(userInfo);
           } else {
             console.info("Refresh token NÃO foi retornado da API!");
@@ -112,8 +114,6 @@ const Session = () => {
             navigate("/home");
           } else {
             console.info("Postou o refresh token!");
-
-            storageService.store("user_session", json);
 
             window.removeEventListener("message", receiveAppMessage, false);
 
