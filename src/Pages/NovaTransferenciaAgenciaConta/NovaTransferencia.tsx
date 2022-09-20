@@ -16,12 +16,16 @@ import RadioButton from "../../layouts/components/RadioButton";
 import ModalBancos from "./ModalBancos";
 import { BancoModel } from "../../models/Banco.model";
 import { storageService } from "../../../services/storage.service";
-import { formatDocument } from "../../../services/util.service";
+import {
+  formatDocument,
+  validateCNPJ,
+  validateCPF,
+} from "../../../services/util.service";
 import { FavorecidoModel } from "../../models/Favorecido.model";
 import { LoginContext } from "../../Contexts/LoginContext";
 import { useNavigate } from "react-router-dom";
 import { Routes } from "../../Constants/Routes";
-import { maskAcc } from "../../../services/mask";
+import { maskAcc, maskDoc } from "../../../services/mask";
 
 const snackInitialForm = {
   open: false,
@@ -100,6 +104,49 @@ export function NovaTransferencia() {
 
   const handleConta = (conta) => {
     setConta(maskAcc(conta));
+  };
+
+  const handleCPF = (cpf) => {
+    cpf = maskDoc(cpf);
+    setCPF(cpf);
+
+    if (cpf) {
+      if (cpf.length !== 14 && cpf.length < 14) {
+        setSnack({
+          open: true,
+          message: MSG_CPF_INVALIDO,
+          severity: "error",
+        });
+      }
+
+      if (cpf.length === 14) {
+        if (!validateCPF(cpf)) {
+          setSnack({
+            open: true,
+            message: MSG_CPF_INVALIDO,
+            severity: "error",
+          });
+        }
+      }
+
+      if (cpf.length === 18) {
+        if (!validateCNPJ(cpf)) {
+          setSnack({
+            open: true,
+            message: MSG_CPF_INVALIDO,
+            severity: "error",
+          });
+        }
+      }
+
+      if (cpf.length !== 18 && cpf.length < 18 && cpf.length > 14) {
+        setSnack({
+          open: true,
+          message: MSG_CPF_INVALIDO,
+          severity: "error",
+        });
+      }
+    }
   };
 
   const handleContinuar = () => {
@@ -249,7 +296,7 @@ export function NovaTransferencia() {
             label='CPF/CNPJ'
             variant='outlined'
             value={cpf}
-            onChange={(e) => setCPF(e.target.value)}
+            onChange={(e) => handleCPF(e.target.value)}
             disabled={valueTitular === "same"}
             onBlur={(e) => validarCpf(e.target.value)}
             InputLabelProps={{ shrink: true }}
