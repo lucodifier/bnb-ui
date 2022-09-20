@@ -39,6 +39,8 @@ export default function TabPreviusTransfers() {
           <FavoredCard
             name={item.nomeDestinatario}
             apelido={""}
+            document={item.numeroCpfDestinatario}
+            to={"/pagamento-agencia-conta"}
             bank={item.nomeBanco}
             account={`${item.codigoAgencia} | ${item.codigoConta}-${item.digitoConta}`}
             accountType={item.tipoConta}

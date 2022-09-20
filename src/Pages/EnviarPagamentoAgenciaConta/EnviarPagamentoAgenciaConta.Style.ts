@@ -36,7 +36,36 @@ const useStyles = makeStyles((theme) => ({
   },
   saldo: {
     fontSize: "1.1rem",
-  }
+  },
+  text_field_input: {
+    width:'-webkit-fill-available'
+  },
+  input_agendamento: {
+    "@media (max-width:600px)": {
+      width:'-webkit-fill-available'
+    },
+    width:'-webkit-fill-available'
+  },
+  submit_button_container: {
+    display: "flex",
+    justifyContent: "center",
+    bottom: 0,
+    
+    "@media (max-width:800px)": {
+      marginTop: "0",
+    },
+  },
+  submit_button: {
+    backgroundColor: "#F2711C",
+    color: "#fff",
+    borderRadius: 5,
+    textAlign: "center",
+    width: "100%",
+    fontSize: "14px",
+  },
+  "&:active": {
+    backgroundColor: "#F2711C",
+  },
 }));
 
 export default useStyles;
