@@ -21,6 +21,7 @@ import { FavorecidoModel } from "../../models/Favorecido.model";
 import { LoginContext } from "../../Contexts/LoginContext";
 import { useNavigate } from "react-router-dom";
 import { Routes } from "../../Constants/Routes";
+import { maskAcc } from "../../../services/mask";
 
 const snackInitialForm = {
   open: false,
@@ -95,6 +96,10 @@ export function NovaTransferencia() {
       message: MSG_CPF_INVALIDO,
       severity: "error",
     });
+  };
+
+  const handleConta = (conta) => {
+    setConta(maskAcc(conta));
   };
 
   const handleContinuar = () => {
@@ -198,7 +203,7 @@ export function NovaTransferencia() {
             label='Conta'
             variant='outlined'
             value={conta}
-            onChange={(e) => setConta(e.target.value)}
+            onChange={(e) => handleConta(e.target.value)}
             InputLabelProps={{ shrink: true }}
             placeholder='0000000000-0'
           />
