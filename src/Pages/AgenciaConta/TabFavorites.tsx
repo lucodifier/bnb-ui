@@ -5,12 +5,10 @@ import FavoredCard from "../../layouts/components/FavoredCard";
 import { bancoService } from "../../../services/banco.service";
 import { BancoModel } from "../../models/Banco.model";
 import { LinearProgress } from "@material-ui/core";
-import { FavorecidoContext } from "../../Contexts/FavorecidoContext";
 
 export default function TabFavorites() {
   const [favoritos, setaFavoritos] = useState<FavoritoModel[]>([]);
   const [loading, isLoading] = useState(true);
-  const { setFavorecido } = useContext(FavorecidoContext);
 
   const obterFavoritos = async () => {
     isLoading(true);
@@ -48,6 +46,8 @@ export default function TabFavorites() {
           <FavoredCard
             name={item.nomeDestinatario}
             apelido={item.apelidoDestinatario}
+            document={item.cpfCnpjDestinatario}
+            to={"/pagamento-agencia-conta"}
             bank={item.nomeBanco}
             account={`${item.codAgencia} | ${item.codConta}-${item.digitoValidadorConta}`}
             accountType={item.tipoConta}

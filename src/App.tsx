@@ -42,6 +42,7 @@ export default function App() {
       codConta: 0,
       ispb: "",
       digitoValidadorConta: "",
+      apelido: ""
     }
   );
 
@@ -53,7 +54,9 @@ export default function App() {
         loading,
         setLoading,
         userInfo,
-        setUserInfo,
+        setUserInfo,  
+        favorecido, 
+        setFavorecido      
       }}>
       <Routes>
         <Route path='/' element={<Layout />}>

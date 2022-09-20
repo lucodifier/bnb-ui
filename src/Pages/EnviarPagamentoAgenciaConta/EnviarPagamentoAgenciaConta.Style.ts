@@ -29,6 +29,14 @@ const useStyles = makeStyles((theme) => ({
       fontSize: "1rem",
     },
   },
+  valorTransferencia: {
+    color:theme.palette.primary.dark,
+    fontWeight: "bold",
+    fontSize: "1.1rem",
+  },
+  saldo: {
+    fontSize: "1.1rem",
+  }
 }));
 
 export default useStyles;

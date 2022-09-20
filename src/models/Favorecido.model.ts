@@ -7,4 +7,5 @@ export interface FavorecidoModel {
   codConta: number;
   ispb: string;
   digitoValidadorConta: string;
+  apelido:string;
 }

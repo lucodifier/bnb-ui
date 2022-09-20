@@ -3,7 +3,6 @@ import * as React from "react";
 import { LoginContext } from "../Contexts/LoginContext";
 import { Navigate } from "react-router-dom";
 import { Props } from "../Types/Types";
-import { MyQRCodeIcon } from "../../assets/icons/iconsSvg";
 import { storageService } from "../../services/storage.service";
 
 export const PrivateRoute = ({ children, ...props }: Props) => {

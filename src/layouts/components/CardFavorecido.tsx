@@ -1,10 +1,8 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Card, Grid, Typography } from "@material-ui/core";
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowIcon } from "../../../assets/icons/iconsSvg";
 import { LoginContext } from "../../Contexts/LoginContext";
-import { FavorecidoModel } from "../../models/Favorecido.model";
+import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,74 +72,72 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "end",
   },
   user_body: {
-    paddingLeft: "2%",
+    paddingLeft: "6%",
     "@media (max-width:600px)": {
       paddingLeft: "10%",
     },
   },
+  points_container: {
+    display: "flex",
+    justifyContent: "left",
+  },
+  points_restritos: {
+    display: "flex",
+    paddingTop: "6px",
+  },
+  points: {
+    borderRadius: "50%",
+    width: "5px",
+    height: "5px",
+    background: "gray",
+  },
 }));
 
-export default function FavoredCard(props: any) {
-
-  const navigate = useNavigate()
-  const { setFavorecido } = useContext(LoginContext);
-
-  const selecionarFavorecido = () => {
-    try {
-    
-    const conta = props.account?.split("|")[0].trim(); 
-    const agencia =  props.account?.split("|")[1].split("-")[0].trim(); 
-    const digito = props.account?.split("|")[1].split("-")[1].trim(); 
-
-    const favorecido = {
-      nomeDestinatario: props.name,
-      nomeBanco: props.bank,
-      cpfCnpjDestinatario:props.document,
-      tipoConta: props.accountType,
-      codAgencia: agencia ? Number(agencia) : 0,
-      codConta: conta ? Number(conta) : 0,
-      digitoValidadorConta: digito,
-      apelido: props.apelido
-    }
-
-    if (setFavorecido) setFavorecido(favorecido as FavorecidoModel);
-
-    navigate(props.to);
-
-    } catch {
-        console.info('Não selecionou o favorecido')
-    }
-  };
+export default function CardFavorecido() {
+  const { favorecido } = useContext(LoginContext);
 
   const classes = useStyles();
   return (
-    <div className={classes.root} key={props.key}>
+    <div className={classes.root}>
       <Grid item xs={12} md={12} sm={12}>
-        <Card
-          className={classes.cards_blocks}
-          style={{ cursor: "pointer" }}
-          onClick={() => selecionarFavorecido()}>
+        <Card className={classes.cards_blocks} style={{ cursor: "pointer" }}>
           <Grid item xs={1} md={1} sm={1}>
-            <div className={classes.user_avatar}>{props.name[0]}</div>
+            <div className={classes.user_avatar}>
+              {favorecido?.nomeDestinatario[0]}
+            </div>
           </Grid>
           <Grid item xs={10} md={10} sm={10} className={classes.user_body}>
             <Typography className={classes.card_user_text}>
-              {`${props.name} ${
-                props.apelido ? "(" + props.apelido + ")" : ""
+              {`${favorecido?.nomeDestinatario} ${
+                favorecido?.apelido ? "(" + favorecido?.apelido + ")" : ""
               }`}
             </Typography>
             <Typography className={classes.card_user_sub_text}>
-              {props.bank}
+              {favorecido?.nomeBanco}
             </Typography>
             <Typography className={classes.card_user_sub_text}>
-              {props.account}{" "}
-              {props.accountType == "C" ? "(Conta corrente)" : "(Poupança)"}
+              Agencia: {favorecido?.codAgencia}{" "}
+              <span style={{ paddingLeft: "30px" }}>
+                {" "}
+                Conta: {favorecido?.codConta}
+              </span>
             </Typography>
-          </Grid>
-          <Grid item xs={1} md={1} sm={1} className={classes.arrow_back_user}>
-            <Link to='/home'>
-              <ArrowIcon />
-            </Link>
+            <div className={classes.points_container}>
+              <div className={classes.points_restritos}>
+                <div className={classes.points}></div>
+                <div className={classes.points}></div>
+                <div className={classes.points}></div>
+              </div>
+              <Typography className={classes.card_user_sub_text}>
+                . {favorecido?.cpfCnpjDestinatario.substring(4, 10)} -{" "}
+                <span className={classes.points}></span>
+              </Typography>
+              <div className={classes.points_restritos}>
+                <div className={classes.points}></div>
+                <div className={classes.points}></div>
+                
+              </div>
+            </div>
           </Grid>
         </Card>
       </Grid>

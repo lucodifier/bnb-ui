@@ -44,6 +44,7 @@ function cathError(error: any, area: string, warning: boolean = true) {
     }
 
     if (error.response && error.response.status === 401) {
+      if (import.meta.env.VITE_ENVIRONMENT !== "local")
       window.location.href = '/#/noAccess'    
     }
   } catch (ex) {
