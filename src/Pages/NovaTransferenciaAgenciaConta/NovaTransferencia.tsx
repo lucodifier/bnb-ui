@@ -18,14 +18,13 @@ import { BancoModel } from "../../models/Banco.model";
 import { storageService } from "../../../services/storage.service";
 import {
   formatDocument,
-  validateCNPJ,
   validateCPF,
 } from "../../../services/util.service";
 import { FavorecidoModel } from "../../models/Favorecido.model";
 import { LoginContext } from "../../Contexts/LoginContext";
 import { useNavigate } from "react-router-dom";
 import { Routes } from "../../Constants/Routes";
-import { maskAcc, maskDoc } from "../../../services/mask";
+import { maskAcc, maskAg, maskDoc } from "../../../services/mask";
 
 const snackInitialForm = {
   open: false,
@@ -37,6 +36,7 @@ const MSG_CPF_INVALIDO = "CPF inválido";
 const MSG_SEM_BANCOS =
   "Não foi possível localizar bancos. Tente novamente mais tarde";
 const MSG_OBRIGATORIOS = "Informe todos os campos!";
+const MSG_CONTA_DIGITO_INVALIDO = "Conta e digito inválidos";
 
 export function NovaTransferencia() {
   const classes = useStyles();
@@ -95,58 +95,26 @@ export function NovaTransferencia() {
   };
 
   const validarCpf = (cpf: string) => {
-    setSnack({
-      open: true,
-      message: MSG_CPF_INVALIDO,
-      severity: "error",
-    });
+    if (!validateCPF(cpf)){
+      setSnack({
+        open: true,
+        message: MSG_CPF_INVALIDO,
+        severity: "error",
+      });
+    }
   };
 
   const handleConta = (conta) => {
     setConta(maskAcc(conta));
   };
 
+  const handleAgencia = (agencia) => {
+    setAgencia(maskAg(agencia));
+  };
+
   const handleCPF = (cpf) => {
     cpf = maskDoc(cpf);
     setCPF(cpf);
-
-    if (cpf) {
-      if (cpf.length !== 14 && cpf.length < 14) {
-        setSnack({
-          open: true,
-          message: MSG_CPF_INVALIDO,
-          severity: "error",
-        });
-      }
-
-      if (cpf.length === 14) {
-        if (!validateCPF(cpf)) {
-          setSnack({
-            open: true,
-            message: MSG_CPF_INVALIDO,
-            severity: "error",
-          });
-        }
-      }
-
-      if (cpf.length === 18) {
-        if (!validateCNPJ(cpf)) {
-          setSnack({
-            open: true,
-            message: MSG_CPF_INVALIDO,
-            severity: "error",
-          });
-        }
-      }
-
-      if (cpf.length !== 18 && cpf.length < 18 && cpf.length > 14) {
-        setSnack({
-          open: true,
-          message: MSG_CPF_INVALIDO,
-          severity: "error",
-        });
-      }
-    }
   };
 
   const handleContinuar = () => {
@@ -158,6 +126,26 @@ export function NovaTransferencia() {
       });
       return;
     }
+
+    if (conta.length < 6){
+      setSnack({
+        open: true,
+        message: MSG_CONTA_DIGITO_INVALIDO,
+        severity: "error",
+      });
+      return;
+    }
+
+    if (!validateCPF(cpf)){
+      setSnack({
+        open: true,
+        message: MSG_CPF_INVALIDO,
+        severity: "error",
+      });
+      return;
+    }
+
+    debugger
 
     const somenteConta = conta?.split("-")[0].trim();
     const digito = conta?.split("-")[1].trim();
@@ -238,7 +226,7 @@ export function NovaTransferencia() {
             label='Agência'
             variant='outlined'
             value={agencia}
-            onChange={(e) => setAgencia(e.target.value)}
+            onChange={(e) => handleAgencia(e.target.value)}
             InputLabelProps={{ shrink: true }}
             placeholder='0000'
           />
