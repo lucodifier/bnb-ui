@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     "@media (max-width:600px)": {
       width:'-webkit-fill-available'
     },
-    width:'-webkit-fill-available'
+    width:'400px'
   },
   submit_button_container: {
     display: "flex",
