@@ -22,3 +22,7 @@ https://reactrouter.com/docs/en/v6/getting-started/overview
 
 https://github.com/StephenGrider/ReduxSimpleStarter/issues/181
 yarn add react react-dom react-router-dom
+
+#### Lista de ícones
+
+https://v4.mui.com/pt/components/material-icons/
