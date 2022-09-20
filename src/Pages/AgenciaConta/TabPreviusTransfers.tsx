@@ -15,20 +15,25 @@ export default function TabPreviusTransfers() {
     try {
       const response =
         await transferenciaService.obterTransferenciasAnterioresAgenciaConta();
-      setAnteriores(response);
+      return response;
     } finally {
       isLoading(false);
     }
+    return [];
   };
 
   useEffect(() => {
-    const initialize = async () => {
-      await obterAnteriores();
-      return () => {
-        setAnteriores([]);
-      };
+    let foiCancelado = false;
+    (async () => {
+      const response = await obterAnteriores();
+      if (!foiCancelado) {
+        setAnteriores(response as TransferenciaAnteriorModel[]);
+      }
+    })();
+
+    return () => {
+      foiCancelado = true;
     };
-    initialize();
   }, []);
 
   return (

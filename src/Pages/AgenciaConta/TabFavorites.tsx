@@ -21,20 +21,27 @@ export default function TabFavorites() {
         if (!item.nomeBanco) item.nomeBanco = item.ispb;
         return item;
       });
-      setaFavoritos(data);
+      return data;
+    } catch {
+      return [];
     } finally {
       isLoading(false);
     }
   };
 
   useEffect(() => {
-    const initialize = async () => {
-      await obterFavoritos();
-      return () => {
-        setaFavoritos([]);
-      };
+    let foiCancelado = false;
+    (async () => {
+      const response = await obterFavoritos();
+      if (!foiCancelado) {
+        console.log("setou");
+        setaFavoritos(response as FavoritoModel[]);
+      }
+    })();
+
+    return () => {
+      foiCancelado = true;
     };
-    initialize();
   }, []);
 
   return (

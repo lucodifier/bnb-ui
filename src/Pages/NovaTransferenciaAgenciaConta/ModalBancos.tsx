@@ -93,6 +93,7 @@ const ModalBancos = React.memo((props: any) => {
     const filtrados = bancos.filter((x) =>
       x.nomeBanco.toLowerCase().includes(nome)
     );
+
     setBancos(filtrados);
     console.log("filtrarBancos");
   };
@@ -104,16 +105,6 @@ const ModalBancos = React.memo((props: any) => {
       if (response) {
         props.buscaBancoErros(false);
         setBancos(response);
-        return;
-      }
-
-      if (import.meta.env.VITE_ENVIRONMENT == "local") {
-        bancos.push({
-          idBanco: 1,
-          ispbBanco: "2",
-          nomeBanco: "Caixa Economica",
-        });
-        setBancos(bancos);
         return;
       }
 
@@ -130,16 +121,23 @@ const ModalBancos = React.memo((props: any) => {
   };
 
   useEffect(() => {
-    const initialize = async () => {
+    let foiCancelado = false;
+    (async () => {
+     
       if (props.modalIsOpen) {
-        await buscaBancos();
+        if (!foiCancelado)
+          await buscaBancos();
+
+          console.log('buscar bancos')
       }
-      return () => {
-        setBancos([]);
-      };
+    })();    
+
+    return () => {
+      foiCancelado = true;
     };
-    initialize();
+
   }, [props]);
+
 
   return (
     <Modal
@@ -170,10 +168,10 @@ const ModalBancos = React.memo((props: any) => {
           )}
 
           {bancos &&
-            bancos.map((bank) => {
+            bancos.map((bank, index) => {
               return (
                 <div
-                  key={bank.idBanco}
+                  key={index}
                   className={
                     bank.idBanco === props.bancoSelecionado?.idBanco
                       ? classes.bank_tab_selected

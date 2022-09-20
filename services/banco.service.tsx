@@ -24,7 +24,6 @@ export const bancoService = {
 
 async function listaBancos() {
   try {
-    
     let response = await api.get(base_path);
     let treated = handlingService.handleResponse(
       response,
