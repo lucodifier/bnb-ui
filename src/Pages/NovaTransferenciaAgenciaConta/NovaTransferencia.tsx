@@ -15,6 +15,8 @@ import Header from "../../layouts/components/Header";
 import RadioButton from "../../layouts/components/RadioButton";
 import ModalBancos from "./ModalBancos";
 import { BancoModel } from "../../models/Banco.model";
+import { storageService } from "../../../services/storage.service";
+import { formatDocument } from "../../../services/util.service";
 
 const snackInitialForm = {
   open: false,
@@ -25,13 +27,11 @@ const snackInitialForm = {
 const MSG_CPF_INVALIDO = "CPF inválido";
 const MSG_SEM_BANCOS =
   "Não foi possível localizar bancos. Tente novamente mais tarde";
+const MSG_OBRIGATORIOS = "Informe todos os campos!";
 
 export function NovaTransferencia() {
   const classes = useStyles();
   const [snack, setSnack] = useState(snackInitialForm);
-
-  const [valueTitular, setValueTitular] = useState("same");
-  const [account, setAccount] = useState(1);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const [bancoSelecionado, setBancoSelecionado] = useState<BancoModel>({
@@ -40,8 +40,14 @@ export function NovaTransferencia() {
     nomeBanco: "",
   });
 
+  const [tipoConta, setTipoConta] = useState("C");
+  const [agencia, setAgencia] = useState("");
+  const [conta, setConta] = useState("");
+  const [valueTitular, setValueTitular] = useState("other");
+  const [cpf, setCPF] = useState("");
+  const [nome, setNome] = useState("");
+
   const selecionaBanco = (banco: BancoModel) => {
-    console.log(banco);
     setBancoSelecionado(banco);
     setModalIsOpen(false);
   };
@@ -59,6 +65,13 @@ export function NovaTransferencia() {
 
   const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueTitular((event.target as HTMLInputElement).value);
+
+    if ((event.target as HTMLInputElement).value === "same") {
+      var user_session = storageService.recover("user_session");
+      if (user_session) setCPF(formatDocument(user_session.documento));
+    } else {
+      setCPF("");
+    }
   };
 
   const closeModal = () => {
@@ -77,11 +90,25 @@ export function NovaTransferencia() {
     });
   };
 
+  const handleContinuar = () => {
+    if (bancoSelecionado.idBanco === 0 || !agencia || !conta || !cpf || !nome) {
+      setSnack({
+        open: true,
+        message: MSG_OBRIGATORIOS,
+        severity: "error",
+      });
+      return;
+    }
+
+    
+
+  };
+
   return (
     <React.Fragment>
       <Header
-        title='Pix - Pagar com Agência e Conta'
-        titleMobile='Pagar com Agência e Conta'
+        title="Pix - Pagar com Agência e Conta"
+        titleMobile="Pagar com Agência e Conta"
       />
 
       <ModalBancos
@@ -103,9 +130,9 @@ export function NovaTransferencia() {
         <Grid item xs={12} md={3} sm={12}>
           <TextField
             className={classes.text_field_input}
-            id='bank-input'
-            label='Banco'
-            variant='outlined'
+            id="bank-input"
+            label="Banco"
+            variant="outlined"
             InputLabelProps={{ shrink: true }}
             onClick={() => setModalIsOpen(!modalIsOpen)}
             value={bancoSelecionado.nomeBanco}
@@ -118,35 +145,40 @@ export function NovaTransferencia() {
         <Grid item xs={12} md={3} sm={12}>
           <TextField
             className={classes.text_field_input}
-            id='account-type-input'
-            label='Tipo de Conta'
-            variant='outlined'
+            id="account-type-input"
+            label="Tipo de Conta"
+            variant="outlined"
             select
-            value={account}
-            onChange={(e) => setAccount(parseInt(e.target.value))}
-            InputLabelProps={{ shrink: true }}>
-            <MenuItem value={1}>Conta Corrente</MenuItem>
-            <MenuItem value={2}>Conta Poupança</MenuItem>
+            value={tipoConta}
+            onChange={(e) => setTipoConta(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+          >
+            <MenuItem value={"C"}>Conta Corrente</MenuItem>
+            <MenuItem value={"P"}>Conta Poupança</MenuItem>
           </TextField>
         </Grid>
         <Grid item xs={12} md={3} sm={12}>
           <TextField
             className={classes.text_field_input}
-            id='agency-input'
-            label='Agência'
-            variant='outlined'
+            id="agency-input"
+            label="Agência"
+            variant="outlined"
+            value={agencia}
+            onChange={(e) => setAgencia(e.target.value)}
             InputLabelProps={{ shrink: true }}
-            placeholder='0000'
+            placeholder="0000"
           />
         </Grid>
         <Grid item xs={12} md={3} sm={12}>
           <TextField
             className={classes.text_field_input}
-            id='account-input'
-            label='Conta'
-            variant='outlined'
+            id="account-input"
+            label="Conta"
+            variant="outlined"
+            value={conta}
+            onChange={(e) => setConta(e.target.value)}
             InputLabelProps={{ shrink: true }}
-            placeholder='0000000000-0'
+            placeholder="0000000000-0"
           />
         </Grid>
       </Grid>
@@ -157,10 +189,11 @@ export function NovaTransferencia() {
           xs={12}
           md={3}
           sm={12}
-          className={classes.grid_radio_container}>
+          className={classes.grid_radio_container}
+        >
           <div className={classes.radio_container}>
             <FormControlLabel
-              value='same'
+              value="same"
               checked={valueTitular === "same"}
               control={<RadioButton onChange={handleChangeRadio} />}
               label={
@@ -171,7 +204,7 @@ export function NovaTransferencia() {
               className={classes.radio_label}
             />
             <FormControlLabel
-              value='other'
+              value="other"
               checked={valueTitular === "other"}
               control={<RadioButton onChange={handleChangeRadio} />}
               label={
@@ -186,22 +219,27 @@ export function NovaTransferencia() {
         <Grid item xs={12} md={3} sm={12}>
           <TextField
             className={classes.text_field_input}
-            id='cpf-input'
-            label='CPF/CNPJ'
-            variant='outlined'
+            id="cpf-input"
+            label="CPF/CNPJ"
+            variant="outlined"
+            value={cpf}
+            onChange={(e) => setCPF(e.target.value)}
+            disabled={valueTitular === "same"}
             onBlur={(e) => validarCpf(e.target.value)}
             InputLabelProps={{ shrink: true }}
-            placeholder='000.000.000-00'
+            placeholder="000.000.000-00"
           />
         </Grid>
         <Grid item xs={12} md={6} sm={12}>
           <TextField
             className={classes.text_field_input}
-            id='name-input'
-            label='Nome Completo'
-            variant='outlined'
+            id="name-input"
+            label="Nome Completo"
+            variant="outlined"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
             InputLabelProps={{ shrink: true }}
-            placeholder='PM ALEXANDRE MOTA ITAU'
+            placeholder="Nome completo"
           />
         </Grid>
       </Grid>
@@ -210,9 +248,11 @@ export function NovaTransferencia() {
         <Grid item xs={12} md={2} sm={12}>
           <Button
             classes={{ root: classes.submit_button }}
-            variant='contained'
-            color='primary'
-            size='large'>
+            variant="contained"
+            color="primary"
+            onClick={() => handleContinuar()}
+            size="large"
+          >
             <span>CONTINUAR</span>
           </Button>
         </Grid>
@@ -222,12 +262,14 @@ export function NovaTransferencia() {
         {...snack}
         style={{ width: "100%" }}
         autoHideDuration={5000}
-        onClose={handleSnackClose}>
+        onClose={handleSnackClose}
+      >
         <Alert
-          variant='filled'
+          variant="filled"
           onClose={handleSnackClose}
           severity={snack.severity}
-          style={{ width: "90%", backgroundColor: "#ebae2a" }}>
+          style={{ width: "90%", backgroundColor: "#ebae2a" }}
+        >
           {snack.message}
         </Alert>
       </Snackbar>
