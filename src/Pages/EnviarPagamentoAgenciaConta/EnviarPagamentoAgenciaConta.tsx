@@ -46,7 +46,7 @@ export function EnviarPagamentoAgenciaConta() {
   const [saldo, setSaldo] = useState(0);
   const [momento, setMomento] = useState("hoje");
   const [dataAgendamento, setDataAgendamento] = useState("");
-
+  const [descricao, setDescricao] = useState("");
   const [editandoValor, setEditandoValor] = useState(false);
   const [verSaldo, setVerSaldo] = useState(false);
   const [buscouSaldo, setBuscouSaldo] = useState(false);
@@ -110,6 +110,7 @@ export function EnviarPagamentoAgenciaConta() {
       });
       return;
     }
+    
     if (momento === "agendar" && dataAgendamento === "") {
       setSnack({
         open: true,
@@ -145,7 +146,69 @@ export function EnviarPagamentoAgenciaConta() {
   };
 
   const senhaInformada = (senha) => {
-    console.log(senha);
+    const de = storageService.recover("user_session");
+
+    const valorAtualizado = Number(
+      MaskUtil.removeMask(valorTransferencia.toString())
+    );
+
+    const payload = {
+      autorizacaoTransferencia: {
+        posicaoCartaoContraSenha: 0,
+        senha: senha,
+      },
+      de: {
+        agencia: de.agencia,
+        conta: de.conta,
+        digito: de.digito,
+        documento: de.documento,
+        tipoConta: de.tipoConta.substring(0, 1), // Pegar apenas inicial P ou C
+      },
+      para: {
+        nome: favorecido?.nomeDestinatario,
+        agencia: favorecido?.codAgencia.toString(),
+        conta: favorecido?.codConta.toString(),
+        digito: favorecido?.digitoValidadorConta,
+        documento: favorecido?.cpfCnpjDestinatario.toString(),
+        idBanco: favorecido?.ispb,
+        nomeBanco: favorecido?.nomeBanco,
+        tipoConta: favorecido?.tipoConta,
+      },
+      observacao: descricao,
+      valor: valorAtualizado,
+    };
+
+    try {
+      setLoading(true);
+      const response = await api.post("Transferencia", payload);
+
+      if (response) {
+        validateResponse(response);
+
+        if (response.data.result) {
+          var transaction = response.data.result;
+          if (transaction.transacaoId > 0) {
+            storageService.store("transaction", transaction);
+            setLoading(false);
+            history.push("/result-transfer");
+            return;
+          }
+        }
+
+        setPassIndication(
+          "Não foi possível realizar a transfererência. Problemas técnicos."
+        );
+        setColor("#ed3c0d");
+        setLoading(false);
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+      validateResponse(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -225,6 +288,7 @@ export function EnviarPagamentoAgenciaConta() {
             label="Descrição"
             className={classes.text_field_input}
             variant="outlined"
+            onChange={(e)=>setDescricao(e.target.value)}
             InputLabelProps={{ shrink: true }}
             placeholder="Descrição (opcional)"
           />
