@@ -45,7 +45,7 @@ function ModalSenha(props: any) {
      
     
     if (posicao < 5 && valor){
-        document.getElementById((posicao + 1).toString())?.setAttribute("focused", true)
+        document.getElementById((posicao + 1).toString())?.setAttribute("focused", "true");
         document.getElementById((posicao + 1).toString())?.focus();
     }
 
