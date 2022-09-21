@@ -51,6 +51,18 @@ function ModalSenha(props: any) {
 
   };
 
+  const senhaInformada = (senha:string) => {
+    props.senhaInformada(senha);
+  };
+
+  const handleContinuar = () => {
+    const temVazio = senhas.find(s=>s==="");
+    if (!temVazio){
+
+      handleClose();
+    }
+  }
+
   return (
     <Dialog
       open={open}
@@ -124,7 +136,7 @@ function ModalSenha(props: any) {
         <Button onClick={handleClose} color="primary">
           Cancelar
         </Button>
-        <Button onClick={handleClose} color="primary" autoFocus>
+        <Button onClick={handleContinuar} color="primary" autoFocus>
           Continuar
         </Button>
       </DialogActions>

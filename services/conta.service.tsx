@@ -18,7 +18,7 @@ async function obterSaldo(agencia, conta, digito) {
     };
 
     let response = await api.get(
-      `${base_path}/dados-transferenciaspix-anteriores`,
+      `${base_path}/Saldo`,
       {
         headers: headers,
       }

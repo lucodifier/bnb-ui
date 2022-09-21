@@ -34,6 +34,7 @@ const snackInitialForm = {
 const MSG_VALOR_NAO_INFORMADO = "Valor não informado";
 const MSG_VALOR_FORA_LIMITE = "Valor maior que seu limite diário";
 const MSG_DATA_AGENDAMENTO = "Informe a data do agendamento";
+const MSG_VALOR_MAIOR_SALDO = "Valor maior que o saldo disponível";
 
 export function EnviarPagamentoAgenciaConta() {
   const classes = useStyles();
@@ -52,10 +53,11 @@ export function EnviarPagamentoAgenciaConta() {
   const buscarSaldo = async () => {
     setCarregandoSaldo(true);
     try {
+      const userSession = storageService.recover("user_session");
       const response = await contaService.obterSaldo(
-        favorecido?.codAgencia,
-        favorecido?.codConta,
-        favorecido?.digitoValidadorConta
+        userSession?.agencia,
+        userSession?.conta,
+        userSession?.digito
       );
       return response?.saldo;
     } catch {
@@ -67,9 +69,11 @@ export function EnviarPagamentoAgenciaConta() {
 
   const handleVerSaldo = async () => {
     if (!verSaldo) {
-      const response = await buscarSaldo();
-      if (response) {
-        setSaldo(response);
+      if (saldo === 0){
+        const response = await buscarSaldo();
+        if (response) {
+          setSaldo(response);
+        }
       }
     }
 
@@ -109,6 +113,17 @@ export function EnviarPagamentoAgenciaConta() {
       });
       return;
     }
+    
+    const valorAtualizado = MaskUtil.removeMask(valorTransferencia.toString());
+    if (valorAtualizado > saldo){
+      setSnack({
+        open: true,
+        message: MSG_VALOR_MAIOR_SALDO,
+        severity: "error",
+      });
+      return;
+    }
+   
 
     handleModalSenhaOpen();
   };
@@ -116,8 +131,8 @@ export function EnviarPagamentoAgenciaConta() {
   return (
     <>
       <Header
-        title='Pix - Pagar com Agência e Conta'
-        titleMobile='Pagar com Agência e Conta'
+        title="Pix - Pagar com Agência e Conta"
+        titleMobile="Pagar com Agência e Conta"
       />
 
       <ModalSenha open={modalSenha} onClose={handleModalSenhaClose} />
@@ -136,14 +151,14 @@ export function EnviarPagamentoAgenciaConta() {
           <Typography className={classes.valorTransferencia}>
             {editandoValor ? (
               <TextField
-                label='Valor'
+                label="Valor"
                 className={classes.text_field_input}
-                variant='outlined'
+                variant="outlined"
                 value={valorTransferencia}
                 onChange={(e) => handleValor(e.target.value)}
                 onBlur={() => setEditandoValor(false)}
                 InputLabelProps={{ shrink: true }}
-                placeholder='00,00'
+                placeholder="00,00"
               />
             ) : (
               <React.Fragment>
@@ -159,15 +174,19 @@ export function EnviarPagamentoAgenciaConta() {
 
           <span className={classes.saldo}>
             Saldo:{" "}
-            {!verSaldo ? (
-              <span>...</span>
+            {carregandoSaldo ? (
+              <CircularProgress style={{ width: "20px", height: "20px" }} />
             ) : (
               <>
-                {carregandoSaldo && <CircularProgress />}
-
-                <span>
-                  R$ {maskValor(MaskUtil.removeMask(saldo.toString()))}{" "}
-                </span>
+                {!verSaldo ? (
+                  <span>...</span>
+                ) : (
+                  <>
+                    <span>
+                      R$ {maskValor(MaskUtil.removeMask(saldo.toString()))}{" "}
+                    </span>
+                  </>
+                )}
               </>
             )}
             <VisibilityIcon
@@ -179,35 +198,35 @@ export function EnviarPagamentoAgenciaConta() {
 
         <Grid item xs={12} md={6} sm={6}>
           <TextField
-            label='Descrição'
+            label="Descrição"
             className={classes.text_field_input}
-            variant='outlined'
+            variant="outlined"
             InputLabelProps={{ shrink: true }}
-            placeholder='Descrição (opcional)'
+            placeholder="Descrição (opcional)"
           />
         </Grid>
         <Grid item xs={1} md={1} sm={1}></Grid>
         <Grid item xs={12} md={12} sm={6}>
           <FormGroup row>
             <FormControlLabel
-              value='hoje'
+              value="hoje"
               checked={momento === "hoje"}
               control={<RadioButton onChange={(e) => setMomento("hoje")} />}
               label={<Typography>Pagar hoje</Typography>}
             />
             <FormControlLabel
-              value='agendar'
+              value="agendar"
               checked={momento === "agendar"}
               control={<RadioButton onChange={(e) => setMomento("agendar")} />}
               label={<Typography>Agendar</Typography>}
             />
 
             <TextField
-              id='datetime-local'
-              variant='outlined'
+              id="datetime-local"
+              variant="outlined"
               className={classes.input_agendamento}
-              label='Data'
-              type='date'
+              label="Data"
+              type="date"
               value={dataAgendamento}
               onChange={(e) => setDataAgendamento(e.target.value)}
               disabled={momento === "hoje"}
@@ -228,10 +247,11 @@ export function EnviarPagamentoAgenciaConta() {
         <Grid item xs={12} md={2} sm={12}>
           <Button
             classes={{ root: classes.submit_button }}
-            variant='contained'
-            color='primary'
-            size='large'
-            onClick={() => handlePagar()}>
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => handlePagar()}
+          >
             <span>PAGAR</span>
           </Button>
         </Grid>
@@ -241,12 +261,14 @@ export function EnviarPagamentoAgenciaConta() {
         {...snack}
         style={{ width: "100%" }}
         autoHideDuration={5000}
-        onClose={handleSnackClose}>
+        onClose={handleSnackClose}
+      >
         <Alert
-          variant='filled'
+          variant="filled"
           onClose={handleSnackClose}
           severity={snack.severity}
-          style={{ width: "90%", backgroundColor: "#ebae2a" }}>
+          style={{ width: "90%", backgroundColor: "#ebae2a" }}
+        >
           {snack.message}
         </Alert>
       </Snackbar>
