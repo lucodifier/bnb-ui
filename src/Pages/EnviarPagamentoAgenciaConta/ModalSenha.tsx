@@ -64,7 +64,7 @@ function ModalSenha(props: any) {
           <Grid item xs={12}>
             <Grid container justifyContent="center" spacing={2}>
             <Grid item xs={2}>
-                <TextField id={1} 
+                <TextField id="0" 
                   className={classes.paper}
                   onChange={(e) => informaSenha(e.target.value, 0)}
                   variant="outlined"
@@ -73,7 +73,7 @@ function ModalSenha(props: any) {
               </Grid>
 
               <Grid item xs={2}>
-                <TextField id={2}
+                <TextField id="1"
                   className={classes.paper}
                   onChange={(e) => informaSenha(e.target.value, 1)}
                   variant="outlined"
@@ -82,7 +82,7 @@ function ModalSenha(props: any) {
               </Grid>
 
               <Grid item xs={2}>
-                <TextField  id={3}
+                <TextField  id="2"
                   className={classes.paper}
                   onChange={(e) => informaSenha(e.target.value, 2)}
                   variant="outlined"
@@ -91,7 +91,7 @@ function ModalSenha(props: any) {
               </Grid>
 
               <Grid item xs={2}>
-                <TextField  id={4}
+                <TextField id="3"
                   className={classes.paper}
                   onChange={(e) => informaSenha(e.target.value, 4)}
                   variant="outlined"
@@ -100,7 +100,7 @@ function ModalSenha(props: any) {
               </Grid>
 
               <Grid item xs={2}>
-                <TextField  id={5}
+                <TextField  id="4"
                   className={classes.paper}
                   onChange={(e) => informaSenha(e.target.value, 5)}
                   variant="outlined"
@@ -109,7 +109,7 @@ function ModalSenha(props: any) {
               </Grid>
 
               <Grid item xs={2}>
-                <TextField  id={6}
+                <TextField id="4"
                   className={classes.paper}
                   onChange={(e) => informaSenha(e.target.value, 6)}
                   variant="outlined"
