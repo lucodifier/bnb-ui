@@ -51,8 +51,9 @@ function ModalSenha(props: any) {
 
   };
 
-  const senhaInformada = (senha:string) => {
-    props.senhaInformada(senha);
+  const senhaInformada = () => {
+    //const senha = senhas.map((s)=>s);
+    props.senhaInformada(senhas);
   };
 
   const handleContinuar = () => {

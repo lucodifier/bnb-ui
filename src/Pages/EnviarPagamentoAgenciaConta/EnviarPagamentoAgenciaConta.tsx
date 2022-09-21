@@ -35,6 +35,8 @@ const MSG_VALOR_NAO_INFORMADO = "Valor não informado";
 const MSG_VALOR_FORA_LIMITE = "Valor maior que seu limite diário";
 const MSG_DATA_AGENDAMENTO = "Informe a data do agendamento";
 const MSG_VALOR_MAIOR_SALDO = "Valor maior que o saldo disponível";
+const MSG_INFORME_FAVORECIDO = "Informe o favorecido novamente na tela anterior";
+
 
 export function EnviarPagamentoAgenciaConta() {
   const classes = useStyles();
@@ -114,7 +116,7 @@ export function EnviarPagamentoAgenciaConta() {
       return;
     }
     
-    const valorAtualizado = MaskUtil.removeMask(valorTransferencia.toString());
+    const valorAtualizado = Number(MaskUtil.removeMask(valorTransferencia.toString()));
     if (valorAtualizado > saldo){
       setSnack({
         open: true,
@@ -123,7 +125,14 @@ export function EnviarPagamentoAgenciaConta() {
       });
       return;
     }
-   
+
+    if(!favorecido){
+      setSnack({
+        open: true,
+        message: MSG_INFORME_FAVORECIDO,
+        severity: "error",
+      });
+    }
 
     handleModalSenhaOpen();
   };
