@@ -50,8 +50,8 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     width: "100%",
     paddingBottom: "2rem",
-    height: '50vh',
-    overflow: 'auto',
+    height: "50vh",
+    overflow: "auto",
   },
   bank_tab: {
     width: "100%",
@@ -89,16 +89,18 @@ const ModalBancos = React.memo((props: any) => {
   const classes = useStyles();
 
   const [bancos, setBancos] = useState(Array<BancoModel>);
+  const [bancosFiltrados, setBancosFiltrados] = useState(Array<BancoModel>);
   const [carregando, setCarregando] = useState<boolean>(true);
 
   const filtrarBancos = async (nome: string) => {
-    
-    const filtrados = bancos.filter((x) =>
-      x.nomeBanco.toLowerCase().includes(nome)
-    );
-
-    setBancos(filtrados);
-    console.log("filtrarBancos");
+    if (nome) {
+      const filtrados = bancos.filter((x) =>
+        x.nomeBanco.toLowerCase().includes(nome)
+      );
+      setBancosFiltrados(filtrados);
+    } else {
+      setBancosFiltrados(bancos);
+    }
   };
 
   const buscaBancos = async () => {
@@ -108,6 +110,7 @@ const ModalBancos = React.memo((props: any) => {
       if (response) {
         props.buscaBancoErros(false);
         setBancos(response);
+        setBancosFiltrados(response);
         return;
       }
 
@@ -126,34 +129,31 @@ const ModalBancos = React.memo((props: any) => {
   useEffect(() => {
     let foiCancelado = false;
     (async () => {
-     
       if (props.modalIsOpen) {
-        if (!foiCancelado)
-          await buscaBancos();
+        if (!foiCancelado) await buscaBancos();
 
-          console.log('buscar bancos')
+        console.log("buscar bancos");
       }
-    })();    
+    })();
 
     return () => {
       foiCancelado = true;
     };
-
   }, [props]);
-
 
   return (
     <Modal
       open={props.modalIsOpen}
       onClose={props.modalClose}
-      aria-labelledby='modal-modal-title'
-      aria-describedby='modal-modal-description'>
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
       <Box className={classes.container}>
         <div className={classes.search_container}>
           <TextField
-            id='bank-input'
-            label='Procurar instituição'
-            variant='outlined'
+            id="bank-input"
+            label="Procurar instituição"
+            variant="outlined"
             onChange={(e) => {
               console.log(e.target.value);
               e.target.value.length >= 2 ? filtrarBancos(e.target.value) : "";
@@ -170,8 +170,8 @@ const ModalBancos = React.memo((props: any) => {
             ""
           )}
 
-          {bancos &&
-            bancos.map((bank, index) => {
+          {bancosFiltrados &&
+            bancosFiltrados.map((bank, index) => {
               return (
                 <div
                   key={index}
@@ -182,7 +182,8 @@ const ModalBancos = React.memo((props: any) => {
                   }
                   onClick={() => {
                     selecionaBanco(bank);
-                  }}>
+                  }}
+                >
                   <Typography className={classes.bank_tab_text}>
                     {bank.nomeBanco}
                   </Typography>
@@ -192,10 +193,11 @@ const ModalBancos = React.memo((props: any) => {
         </div>
         <div className={classes.btn_container}>
           <Button
-            color='primary'
-            size='large'
+            color="primary"
+            size="large"
             className={classes.btn_style}
-            onClick={props.modalClose}>
+            onClick={props.modalClose}
+          >
             <span>CANCELAR</span>
           </Button>
         </div>
