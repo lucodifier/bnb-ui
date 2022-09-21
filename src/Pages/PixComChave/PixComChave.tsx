@@ -107,9 +107,10 @@ export function PixComChave() {
       setChavePixList(
         transferenciasList.map((item: TransferenciaAnteriorModel) => {
           return new InfoChavePix(
-            item.nm_pri_ttl_dst,
-            getNameByIspb(bancos, item.cd_ispb),
-            item.ch_en_rcb
+            item.nomeDestinatario,
+            getNameByIspb(bancos, item.ispb),
+            'chave'
+            //item.ch_en_rcb
           );
         })
       );
