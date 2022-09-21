@@ -33,17 +33,17 @@ const useStyles = makeStyles((theme) => ({
 function ModalSenha(props: any) {
   const classes = useStyles();
   const { onClose, open } = props;
-  const [senhas, setSenhas] = useState<string[]>(["", "", "", "", "", ""]);
+  const [senhas, setSenhas] = useState<Array<string>>(["", "", "", "", "", ""]);
 
   const handleClose = () => {
     onClose();
   };
 
   const informaSenha = (valor: string, posicao: number = 0) => {
-    senhas[posicao] = valor[0];
-    setSenhas((prev) => ({ ...prev, senhas }));
+    senhas[posicao] = valor;
+    setSenhas(senhas);
 
-    if (posicao < 5 && valor) {
+    if (valor) {
       document
         .getElementById((posicao + 1).toString())
         ?.setAttribute("focused", "true");
@@ -52,8 +52,8 @@ function ModalSenha(props: any) {
   };
 
   const handleContinuar = () => {
-    const temVazio = senhas.find((s) => s === "");
-    if (!temVazio) {
+    const temVazio = senhas.filter(s=>s==="");
+    if (temVazio.length === 0) {
       const senha = senhas.join("");
       props.senhaInformada(senha);
       handleClose();
@@ -105,6 +105,16 @@ function ModalSenha(props: any) {
                 <TextField
                   id='3'
                   className={classes.paper}
+                  onChange={(e) => informaSenha(e.target.value, 3)}
+                  variant='outlined'
+                  inputProps={{ maxLength: 1 }}
+                />
+              </Grid>
+
+              <Grid item xs={2}>
+                <TextField
+                  id='4'
+                  className={classes.paper}
                   onChange={(e) => informaSenha(e.target.value, 4)}
                   variant='outlined'
                   inputProps={{ maxLength: 1 }}
@@ -113,19 +123,9 @@ function ModalSenha(props: any) {
 
               <Grid item xs={2}>
                 <TextField
-                  id='4'
+                  id='5'
                   className={classes.paper}
                   onChange={(e) => informaSenha(e.target.value, 5)}
-                  variant='outlined'
-                  inputProps={{ maxLength: 1 }}
-                />
-              </Grid>
-
-              <Grid item xs={2}>
-                <TextField
-                  id='4'
-                  className={classes.paper}
-                  onChange={(e) => informaSenha(e.target.value, 6)}
                   variant='outlined'
                   inputProps={{ maxLength: 1 }}
                 />

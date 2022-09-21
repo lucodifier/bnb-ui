@@ -49,6 +49,7 @@ export function EnviarPagamentoAgenciaConta() {
 
   const [editandoValor, setEditandoValor] = useState(false);
   const [verSaldo, setVerSaldo] = useState(false);
+  const [buscouSaldo, setBuscouSaldo] = useState(false);
   const [modalSenha, setModalSenha] = useState(false);
   const [carregandoSaldo, setCarregandoSaldo] = useState(false);
 
@@ -61,6 +62,7 @@ export function EnviarPagamentoAgenciaConta() {
         userSession?.conta,
         userSession?.digito
       );
+
       return response?.saldo;
     } catch {
       return 0;
@@ -74,6 +76,7 @@ export function EnviarPagamentoAgenciaConta() {
       if (saldo === 0) {
         const response = await buscarSaldo();
         if (response) {
+          setBuscouSaldo(true);
           setSaldo(response);
         }
       }
@@ -116,16 +119,18 @@ export function EnviarPagamentoAgenciaConta() {
       return;
     }
 
-    const valorAtualizado = Number(
-      MaskUtil.removeMask(valorTransferencia.toString())
-    );
-    if (valorAtualizado > saldo) {
-      setSnack({
-        open: true,
-        message: MSG_VALOR_MAIOR_SALDO,
-        severity: "error",
-      });
-      return;
+    if (buscouSaldo) {
+      const valorAtualizado = Number(
+        MaskUtil.removeMask(valorTransferencia.toString())
+      );
+      if (valorAtualizado > saldo) {
+        setSnack({
+          open: true,
+          message: MSG_VALOR_MAIOR_SALDO,
+          severity: "error",
+        });
+        return;
+      }
     }
 
     if (!favorecido) {
@@ -146,8 +151,8 @@ export function EnviarPagamentoAgenciaConta() {
   return (
     <>
       <Header
-        title='Pix - Pagar com Agência e Conta'
-        titleMobile='Pagar com Agência e Conta'
+        title="Pix - Pagar com Agência e Conta"
+        titleMobile="Pagar com Agência e Conta"
       />
 
       <ModalSenha
@@ -170,14 +175,14 @@ export function EnviarPagamentoAgenciaConta() {
           <Typography className={classes.valorTransferencia}>
             {editandoValor ? (
               <TextField
-                label='Valor'
+                label="Valor"
                 className={classes.text_field_input}
-                variant='outlined'
+                variant="outlined"
                 value={valorTransferencia}
                 onChange={(e) => handleValor(e.target.value)}
                 onBlur={() => setEditandoValor(false)}
                 InputLabelProps={{ shrink: true }}
-                placeholder='00,00'
+                placeholder="00,00"
               />
             ) : (
               <React.Fragment>
@@ -217,35 +222,35 @@ export function EnviarPagamentoAgenciaConta() {
 
         <Grid item xs={12} md={6} sm={6}>
           <TextField
-            label='Descrição'
+            label="Descrição"
             className={classes.text_field_input}
-            variant='outlined'
+            variant="outlined"
             InputLabelProps={{ shrink: true }}
-            placeholder='Descrição (opcional)'
+            placeholder="Descrição (opcional)"
           />
         </Grid>
         <Grid item xs={1} md={1} sm={1}></Grid>
         <Grid item xs={12} md={12} sm={6}>
           <FormGroup row>
             <FormControlLabel
-              value='hoje'
+              value="hoje"
               checked={momento === "hoje"}
               control={<RadioButton onChange={(e) => setMomento("hoje")} />}
               label={<Typography>Pagar hoje</Typography>}
             />
             <FormControlLabel
-              value='agendar'
+              value="agendar"
               checked={momento === "agendar"}
               control={<RadioButton onChange={(e) => setMomento("agendar")} />}
               label={<Typography>Agendar</Typography>}
             />
 
             <TextField
-              id='datetime-local'
-              variant='outlined'
+              id="datetime-local"
+              variant="outlined"
               className={classes.input_agendamento}
-              label='Data'
-              type='date'
+              label="Data"
+              type="date"
               value={dataAgendamento}
               onChange={(e) => setDataAgendamento(e.target.value)}
               disabled={momento === "hoje"}
@@ -266,10 +271,11 @@ export function EnviarPagamentoAgenciaConta() {
         <Grid item xs={12} md={2} sm={12}>
           <Button
             classes={{ root: classes.submit_button }}
-            variant='contained'
-            color='primary'
-            size='large'
-            onClick={() => handlePagar()}>
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => handlePagar()}
+          >
             <span>PAGAR</span>
           </Button>
         </Grid>
@@ -279,12 +285,14 @@ export function EnviarPagamentoAgenciaConta() {
         {...snack}
         style={{ width: "100%" }}
         autoHideDuration={5000}
-        onClose={handleSnackClose}>
+        onClose={handleSnackClose}
+      >
         <Alert
-          variant='filled'
+          variant="filled"
           onClose={handleSnackClose}
           severity={snack.severity}
-          style={{ width: "90%", backgroundColor: "#ebae2a" }}>
+          style={{ width: "90%", backgroundColor: "#ebae2a" }}
+        >
           {snack.message}
         </Alert>
       </Snackbar>
