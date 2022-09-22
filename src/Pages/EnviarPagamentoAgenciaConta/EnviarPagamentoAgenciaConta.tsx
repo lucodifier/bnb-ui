@@ -21,9 +21,18 @@ import { maskValor } from "../../../services/mask";
 import { contaService } from "../../../services/conta.service";
 import { Alert } from "@material-ui/lab";
 import ModalSenha from "./ModalSenha";
-import { SettingsInputComponent } from "@material-ui/icons";
 import { storageService } from "../../../services/storage.service";
+import { criptografiaService } from "../../../services/criptografia.service";
 import { LoginContext } from "../../Contexts/LoginContext";
+import { transferenciaService } from "../../../services/transferencia.service";
+import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText 
+} from "@material-ui/core";
 
 const snackInitialForm = {
   open: false,
@@ -35,11 +44,12 @@ const MSG_VALOR_NAO_INFORMADO = "Valor não informado";
 const MSG_VALOR_FORA_LIMITE = "Valor maior que seu limite diário";
 const MSG_DATA_AGENDAMENTO = "Informe a data do agendamento";
 const MSG_VALOR_MAIOR_SALDO = "Valor maior que o saldo disponível";
-const MSG_INFORME_FAVORECIDO =
-  "Informe o favorecido novamente na tela anterior";
+const MSG_INFORME_FAVORECIDO ="Informe o favorecido novamente na tela anterior";
+const MSG_ERRO_TRANSFERENCIA ="No momento, não foi possível realizar sua transação. Deseja agendar para que seja realizada ao longo do dia?";
 
 export function EnviarPagamentoAgenciaConta() {
   const classes = useStyles();
+  const navigate = useNavigate();
   const { favorecido } = useContext(LoginContext);
   const [snack, setSnack] = useState(snackInitialForm);
   const [valorTransferencia, setValorTransferencia] = useState(0);
@@ -52,6 +62,8 @@ export function EnviarPagamentoAgenciaConta() {
   const [buscouSaldo, setBuscouSaldo] = useState(false);
   const [modalSenha, setModalSenha] = useState(false);
   const [carregandoSaldo, setCarregandoSaldo] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [dialogAlerta, setDialogAlerta] = useState({open:false, message: ""});
 
   const buscarSaldo = async () => {
     setCarregandoSaldo(true);
@@ -97,6 +109,10 @@ export function EnviarPagamentoAgenciaConta() {
     setModalSenha(true);
   };
 
+  const handleDialogAlertClose = () => {
+    setDialogAlerta({open:false, message: ""});
+  };
+
   const handleModalSenhaClose = () => {
     setModalSenha(false);
   };
@@ -110,7 +126,7 @@ export function EnviarPagamentoAgenciaConta() {
       });
       return;
     }
-    
+
     if (momento === "agendar" && dataAgendamento === "") {
       setSnack({
         open: true,
@@ -134,28 +150,35 @@ export function EnviarPagamentoAgenciaConta() {
       }
     }
 
-    if (!favorecido) {
+    if (!favorecido?.nomeDestinatario) {
       setSnack({
         open: true,
         message: MSG_INFORME_FAVORECIDO,
         severity: "error",
       });
+      return;
     }
 
     handleModalSenhaOpen();
   };
 
-  const senhaInformada = (senha) => {
+  const senhaInformada = async (senha) => {
     const de = storageService.recover("user_session");
+
+    debugger;
 
     const valorAtualizado = Number(
       MaskUtil.removeMask(valorTransferencia.toString())
     );
 
+    var senhaCriptografada = criptografiaService.criptografar(senha);
+
+    const dataTransacao = dataAgendamento ? dataAgendamento : new Date();
+
     const payload = {
       autorizacaoTransferencia: {
         posicaoCartaoContraSenha: 0,
-        senha: senha,
+        senha: senhaCriptografada,
       },
       de: {
         agencia: de.agencia,
@@ -176,38 +199,28 @@ export function EnviarPagamentoAgenciaConta() {
       },
       observacao: descricao,
       valor: valorAtualizado,
+      DataTransacao: dataTransacao
     };
 
     try {
-      setLoading(true);
-      const response = await api.post("Transferencia", payload);
+      setEnviando(true);
 
-      if (response) {
-        validateResponse(response);
+      var transacao = await transferenciaService.realizarTransferencia(payload);
 
-        if (response.data.result) {
-          var transaction = response.data.result;
-          if (transaction.transacaoId > 0) {
-            storageService.store("transaction", transaction);
-            setLoading(false);
-            history.push("/result-transfer");
-            return;
-          }
+      if (transacao) {
+        if (transacao?.transacaoId > 0) {
+          storageService.store("transaction", transacao);
+          navigate("/consultaComprovante");
+          return;
+        } else {
+          setDialogAlerta({open:true, message: MSG_ERRO_TRANSFERENCIA});
         }
-
-        setPassIndication(
-          "Não foi possível realizar a transfererência. Problemas técnicos."
-        );
-        setColor("#ed3c0d");
-        setLoading(false);
-        return;
       }
     } catch (error) {
       console.log(error);
-      validateResponse(error);
-      setLoading(false);
+      setEnviando(false);
     } finally {
-      setLoading(false);
+      setEnviando(false);
     }
   };
 
@@ -288,7 +301,7 @@ export function EnviarPagamentoAgenciaConta() {
             label="Descrição"
             className={classes.text_field_input}
             variant="outlined"
-            onChange={(e)=>setDescricao(e.target.value)}
+            onChange={(e) => setDescricao(e.target.value)}
             InputLabelProps={{ shrink: true }}
             placeholder="Descrição (opcional)"
           />
@@ -344,6 +357,28 @@ export function EnviarPagamentoAgenciaConta() {
           </Button>
         </Grid>
       </Grid>
+
+      <Dialog
+        open={dialogAlerta.open}
+        onClose={handleDialogAlertClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Atenção
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+           {dialogAlerta.message}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogAlertClose}>NÃO</Button>
+          <Button onClick={handleDialogAlertClose} autoFocus>
+            SIM
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         {...snack}

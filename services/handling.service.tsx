@@ -1,18 +1,25 @@
 function handleResponse(response: any, area: string) {
-  if (response.status === 204) {
+  
+  if (response.response){
+    if (response.response.status == 400) {
+        cathError(response.response.data.error[0], area, true);
+        return response.response.data.error[0];
+      }
+  }
+
+  if (response?.status === 204) {
     cathError(response, area, true);
     return null;
   }
-  if (response.status !== 200 && response.status !== 201) {
+  if (response?.status !== 200 && response.status !== 201) {
     cathError(response, area, true);
     return null;
   }
 
-  if (response.data){
-    if (response.data.result.data){
+  if (response.data) {
+    if (response.data.result.data) {
       return response.data.result.data;
-    }
-    else {
+    } else {
       return response.data.result;
     }
   }
@@ -45,7 +52,7 @@ function cathError(error: any, area: string, warning: boolean = true) {
 
     if (error.response && error.response.status === 401) {
       if (import.meta.env.VITE_ENVIRONMENT !== "local")
-      window.location.href = '/#/noAccess'    
+        window.location.href = "/#/noAccess";
     }
   } catch (ex) {
     console.log(ex);

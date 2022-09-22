@@ -10,7 +10,7 @@ export function formatDocument(cpf: string) {
 
 export const toCurrency = (value) => {
   if (value) {
-    debugger
+    
     value = value.replace(/\D/g, "");
     try {
       return Number(value).toLocaleString("pt-br", {
@@ -272,7 +272,6 @@ export function generateUUID() {
   });
 }
 
-
 export class MaskUtil {
 	static maskByTipoChave(value: string, tipoChave: any) {
 
@@ -336,3 +335,4 @@ export class MaskUtil {
 
 	}
 }
+

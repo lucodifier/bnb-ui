@@ -5,6 +5,7 @@ const base_path = "Transferencia";
 
 export const transferenciaService = {
   obterTransferenciasAnterioresAgenciaConta,
+  realizarTransferencia
 };
 
 export function obterTransacoesAnterioresPorChave(
@@ -38,6 +39,29 @@ async function obterTransferenciasAnterioresAgenciaConta() {
     let treated = handlingService.handleResponse(
       response,
       "favoritesService.getFavorites"
+    );
+    if (treated) {
+      return treated;
+    }
+    return null;
+  } catch (error) {
+    handlingService.cathError(error, "favoritesService.getFavorites");
+    return null;
+  }
+}
+
+async function realizarTransferencia(payload:any){
+
+  try {
+    debugger
+    let response = await api.post(
+      `${base_path}/emitirpix`,
+      payload
+    );
+
+    let treated = handlingService.handleResponse(
+      response,
+      "favoritesService.realizarTransferencia"
     );
     if (treated) {
       return treated;
